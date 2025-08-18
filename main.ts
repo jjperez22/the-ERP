@@ -15,6 +15,7 @@ import { ProjectController } from './controllers/ProjectController';
 import { AIInsightController } from './controllers/AIInsightController';
 import { AnalyticsController } from './controllers/AnalyticsController';
 import { SupplyChainController } from './controllers/SupplyChainController';
+import { VoiceAIController } from './controllers/VoiceAIController';
 
 // Services
 import { DatabaseService } from './services/DatabaseService';
@@ -85,6 +86,7 @@ class ConstructionERPApplication {
     this.app.controller(AIInsightController);
     this.app.controller(AnalyticsController);
     this.app.controller(SupplyChainController);
+    this.app.controller(VoiceAIController);
   }
 
   private setupEventHandlers() {

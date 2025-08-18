@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ConstructERP - Construction Material Supplier Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <div class="header-brand">
+                <button class="mobile-nav-toggle" id="mobileNavToggle">☰</button>
+                <h1>ConstructERP</h1>
+                <span class="header-tagline">Smart ERP for Construction Materials</span>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn--primary btn--sm" id="quickOrderBtn">+ Quick Order</button>
+                <div class="user-menu">
+                    <span>John Smith</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+        <ul class="sidebar-nav">
+            <li class="nav-item active" data-module="dashboard">
+                <span class="nav-icon">📊</span>
+                <span class="nav-text">Dashboard</span>
+            </li>
+            <li class="nav-item" data-module="inventory">
+                <span class="nav-icon">📦</span>
+                <span class="nav-text">Inventory</span>
+            </li>
+            <li class="nav-item" data-module="customers">
+                <span class="nav-icon">👥</span>
+                <span class="nav-text">Customers</span>
+            </li>
+            <li class="nav-item" data-module="orders">
+                <span class="nav-icon">📋</span>
+                <span class="nav-text">Orders</span>
+            </li>
+            <li class="nav-item" data-module="insights">
+                <span class="nav-icon">🧠</span>
+                <span class="nav-text">AI Insights</span>
+            </li>
+            <li class="nav-item" data-module="reports">
+                <span class="nav-icon">📈</span>
+                <span class="nav-text">Reports</span>
+            </li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <!-- Dashboard Module -->
+        <div id="dashboard" class="module active">
+            <div class="module-header">
+                <h2>Dashboard Overview</h2>
+                <div class="date-display">Today: August 16, 2025</div>
+            </div>
+
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-icon">💰</div>
+                    <div class="kpi-content">
+                        <div class="kpi-value">$234,567</div>
+                        <div class="kpi-label">Monthly Revenue</div>
+                        <div class="kpi-change positive">+12.5%</div>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon">📦</div>
+                    <div class="kpi-content">
+                        <div class="kpi-value">156</div>
+                        <div class="kpi-label">Total Orders</div>
+                        <div class="kpi-change positive">+8.3%</div>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon">👥</div>
+                    <div class="kpi-content">
+                        <div class="kpi-value">89</div>
+                        <div class="kpi-label">Active Customers</div>
+                        <div class="kpi-change positive">+5.2%</div>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon">⚠️</div>
+                    <div class="kpi-content">
+                        <div class="kpi-value">12</div>
+                        <div class="kpi-label">Low Stock Items</div>
+                        <div class="kpi-change negative">+3</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="chart-card">
+                    <h3>Sales Trend</h3>
+                    <div class="chart-container" style="position: relative; height: 300px;">
+                        <canvas id="salesChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="insights-panel">
+                    <h3>AI Insights & Alerts</h3>
+                    <div class="insights-list" id="dashboardInsights">
+                        <!-- Insights will be populated by JavaScript -->
+                    </div>
+                    <button class="btn btn--outline btn--sm" onclick="showModule('insights')">View All Insights</button>
+                </div>
+
+                <div class="activity-feed">
+                    <h3>Recent Activity</h3>
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <div class="activity-icon">📋</div>
+                            <div class="activity-content">
+                                <div class="activity-text">New order from ABC Construction Co</div>
+                                <div class="activity-time">2 hours ago</div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon">⚠️</div>
+                            <div class="activity-content">
+                                <div class="activity-text">Low stock alert: Portland Cement</div>
+                                <div class="activity-time">4 hours ago</div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon">✅</div>
+                            <div class="activity-content">
+                                <div class="activity-text">Order ORD003 delivered to Home Depot</div>
+                                <div class="activity-time">6 hours ago</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inventory Module -->
+        <div id="inventory" class="module">
+            <div class="module-header">
+                <h2>Inventory Management</h2>
+                <div class="module-actions">
+                    <input type="text" class="form-control search-input" placeholder="Search products..." id="productSearch">
+                    <button class="btn btn--primary" id="addProductBtn">+ Add Product</button>
+                </div>
+            </div>
+
+            <div class="filter-bar">
+                <select class="form-control" id="categoryFilter">
+                    <option value="">All Categories</option>
+                    <option value="Lumber">Lumber</option>
+                    <option value="Concrete">Concrete</option>
+                    <option value="Roofing">Roofing</option>
+                    <option value="Electrical">Electrical</option>
+                    <option value="Plumbing">Plumbing</option>
+                    <option value="Insulation">Insulation</option>
+                    <option value="Drywall">Drywall</option>
+                    <option value="Flooring">Flooring</option>
+                </select>
+                <select class="form-control" id="stockFilter">
+                    <option value="">All Stock Levels</option>
+                    <option value="low">Low Stock</option>
+                    <option value="normal">Normal Stock</option>
+                    <option value="high">High Stock</option>
+                </select>
+            </div>
+
+            <div class="inventory-stats">
+                <div class="stat-item">
+                    <span class="stat-value">8</span>
+                    <span class="stat-label">Total Products</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">$67,432</span>
+                    <span class="stat-label">Total Inventory Value</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">4.2</span>
+                    <span class="stat-label">Avg Turnover Rate</span>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table class="data-table" id="productTable">
+                    <thead>
+                        <tr>
+                            <th>SKU</th>
+                            <th>Product Name</th>
+                            <th>Category</th>
+                            <th>Stock Level</th>
+                            <th>Price</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productTableBody">
+                        <!-- Product rows will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Customers Module -->
+        <div id="customers" class="module">
+            <div class="module-header">
+                <h2>Customer Management</h2>
+                <div class="module-actions">
+                    <input type="text" class="form-control search-input" placeholder="Search customers..." id="customerSearch">
+                    <button class="btn btn--primary" id="addCustomerBtn">+ Add Customer</button>
+                </div>
+            </div>
+
+            <div class="customer-segments">
+                <div class="segment-card">
+                    <h4>General Contractors</h4>
+                    <div class="segment-count">15</div>
+                    <div class="segment-revenue">$342K Revenue</div>
+                </div>
+                <div class="segment-card">
+                    <h4>Trade Contractors</h4>
+                    <div class="segment-count">42</div>
+                    <div class="segment-revenue">$189K Revenue</div>
+                </div>
+                <div class="segment-card">
+                    <h4>Retailers</h4>
+                    <div class="segment-count">8</div>
+                    <div class="segment-revenue">$156K Revenue</div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table class="data-table" id="customerTable">
+                    <thead>
+                        <tr>
+                            <th>Customer Name</th>
+                            <th>Type</th>
+                            <th>Revenue</th>
+                            <th>Orders</th>
+                            <th>Churn Risk</th>
+                            <th>Last Order</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customerTableBody">
+                        <!-- Customer rows will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Orders Module -->
+        <div id="orders" class="module">
+            <div class="module-header">
+                <h2>Sales & Orders</h2>
+                <div class="module-actions">
+                    <button class="btn btn--primary" id="newOrderBtn">+ New Order</button>
+                    <button class="btn btn--outline" id="exportOrdersBtn">Export</button>
+                </div>
+            </div>
+
+            <div class="order-pipeline">
+                <div class="pipeline-stage">
+                    <h4>Quotes</h4>
+                    <div class="stage-count">23</div>
+                    <div class="stage-value">$45,678</div>
+                </div>
+                <div class="pipeline-stage">
+                    <h4>Processing</h4>
+                    <div class="stage-count">12</div>
+                    <div class="stage-value">$28,934</div>
+                </div>
+                <div class="pipeline-stage">
+                    <h4>Shipped</h4>
+                    <div class="stage-count">34</div>
+                    <div class="stage-value">$67,234</div>
+                </div>
+                <div class="pipeline-stage">
+                    <h4>Delivered</h4>
+                    <div class="stage-count">87</div>
+                    <div class="stage-value">$134,567</div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table class="data-table" id="orderTable">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Date</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Items</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orderTableBody">
+                        <!-- Order rows will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- AI Insights Module -->
+        <div id="insights" class="module">
+            <div class="module-header">
+                <h2>AI Insights Hub</h2>
+                <div class="module-actions">
+                    <button class="btn btn--outline" id="refreshInsightsBtn">🔄 Refresh</button>
+                </div>
+            </div>
+
+            <div class="insights-grid">
+                <div class="insight-category">
+                    <h3>🚨 Critical Alerts</h3>
+                    <div class="insight-list" id="criticalInsights">
+                        <!-- Critical insights populated by JS -->
+                    </div>
+                </div>
+                <div class="insight-category">
+                    <h3>⚠️ Warnings</h3>
+                    <div class="insight-list" id="warningInsights">
+                        <!-- Warning insights populated by JS -->
+                    </div>
+                </div>
+                <div class="insight-category">
+                    <h3>💡 Recommendations</h3>
+                    <div class="insight-list" id="infoInsights">
+                        <!-- Info insights populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="forecast-section">
+                <h3>Demand Forecast</h3>
+                <div class="chart-container" style="position: relative; height: 400px;">
+                    <canvas id="demandChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports Module -->
+        <div id="reports" class="module">
+            <div class="module-header">
+                <h2>Reports & Analytics</h2>
+                <div class="module-actions">
+                    <select class="form-control" id="reportPeriod">
+                        <option value="30">Last 30 Days</option>
+                        <option value="90">Last 90 Days</option>
+                        <option value="365">Last Year</option>
+                    </select>
+                    <button class="btn btn--outline" id="exportReportBtn">Export PDF</button>
+                </div>
+            </div>
+
+            <div class="reports-grid">
+                <div class="report-card">
+                    <h3>Revenue Analysis</h3>
+                    <div class="chart-container" style="position: relative; height: 250px;">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
+                <div class="report-card">
+                    <h3>Inventory Turnover</h3>
+                    <div class="chart-container" style="position: relative; height: 250px;">
+                        <canvas id="turnoverChart"></canvas>
+                    </div>
+                </div>
+                <div class="report-card">
+                    <h3>Customer Segments</h3>
+                    <div class="chart-container" style="position: relative; height: 250px;">
+                        <canvas id="customerChart"></canvas>
+                    </div>
+                </div>
+                <div class="report-card">
+                    <h3>Product Performance</h3>
+                    <div class="chart-container" style="position: relative; height: 250px;">
+                        <canvas id="productChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal for detailed views -->
+    <div id="modal" class="modal hidden">
+        <div class="modal-backdrop" onclick="closeModal()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Details</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Dynamic content will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,153 @@
+{
+  "market_data": {
+    "Market Size": {
+      "2024": 3.5,
+      "2033": 7.8,
+      "CAGR": "8.5-9.5%"
+    },
+    "Company Size Breakdown": {
+      "Large Enterprises": "21% market share (Oracle + SAP)",
+      "Mid-size": "$100M-$1B revenue range",
+      "Small": "Under $100M revenue, 80% of SAP customers are SMEs"
+    }
+  },
+  "erp_vendors": {
+    "SAP S/4HANA": {
+      "Target": "Large enterprises",
+      "Strengths": [
+        "Real-time analytics",
+        "AI automation",
+        "Global operations"
+      ],
+      "Pain_Points": [
+        "High complexity",
+        "Implementation cost",
+        "Over-engineering for mid-size"
+      ]
+    },
+    "Oracle NetSuite": {
+      "Target": "Mid-size to large",
+      "Strengths": [
+        "Cloud-native",
+        "Integrated suite",
+        "600+ partner apps"
+      ],
+      "Pain_Points": [
+        "Can be complex for smaller companies",
+        "Subscription costs"
+      ]
+    },
+    "Acumatica": {
+      "Target": "Mid-size construction",
+      "Strengths": [
+        "Mobile-friendly",
+        "Real-time reporting",
+        "Construction-specific"
+      ],
+      "Pain_Points": [
+        "Limited large enterprise features",
+        "Customization limitations"
+      ]
+    },
+    "Epicor": {
+      "Target": "Manufacturing/distribution focus",
+      "Strengths": [
+        "Strong SCM",
+        "Manufacturing expertise",
+        "Multiple deployment options"
+      ],
+      "Pain_Points": [
+        "Separate databases",
+        "Complex integrations",
+        "Late to cloud"
+      ]
+    },
+    "Microsoft Dynamics 365": {
+      "Target": "Small to mid-size",
+      "Strengths": [
+        "Microsoft ecosystem",
+        "Cloud-native",
+        "Cost-effective"
+      ],
+      "Pain_Points": [
+        "Limited advanced manufacturing",
+        "Customization challenges"
+      ]
+    }
+  },
+  "pain_points_by_size": {
+    "Small Companies (Under $25M)": [
+      "Limited IT resources",
+      "Cost constraints",
+      "Manual processes with spreadsheets",
+      "Basic inventory tracking needs",
+      "Simple job costing requirements",
+      "Integration with QuickBooks/basic accounting"
+    ],
+    "Mid-size Companies ($25M-$500M)": [
+      "Siloed data across departments",
+      "Need for real-time visibility",
+      "Complex project management needs",
+      "Multi-location coordination",
+      "Vendor/supplier management complexity",
+      "Advanced reporting requirements"
+    ],
+    "Large Companies ($500M+)": [
+      "Legacy system integration challenges",
+      "Global operations complexity",
+      "Advanced compliance requirements",
+      "Sophisticated supply chain management",
+      "Multi-entity consolidation needs",
+      "Advanced analytics and BI requirements"
+    ]
+  },
+  "ai_opportunities": {
+    "Small Companies": {
+      "Primary_Needs": [
+        "Automated data entry",
+        "Basic demand forecasting",
+        "Invoice processing automation",
+        "Simple chatbot for customer service",
+        "Automated reorder points"
+      ],
+      "AI_Solutions": [
+        "OCR for invoice processing",
+        "Basic machine learning for demand prediction",
+        "Rule-based automation workflows",
+        "Simple NLP chatbots"
+      ]
+    },
+    "Mid-size Companies": {
+      "Primary_Needs": [
+        "Predictive inventory management",
+        "Sales forecasting",
+        "Supplier risk assessment",
+        "Price optimization",
+        "Project timeline prediction"
+      ],
+      "AI_Solutions": [
+        "ML-based demand forecasting",
+        "Predictive analytics for maintenance",
+        "AI-powered procurement optimization",
+        "Advanced process automation",
+        "Computer vision for quality control"
+      ]
+    },
+    "Large Companies": {
+      "Primary_Needs": [
+        "Advanced supply chain optimization",
+        "Risk management and compliance",
+        "Global demand planning",
+        "Complex pricing strategies",
+        "Predictive maintenance"
+      ],
+      "AI_Solutions": [
+        "Deep learning for complex forecasting",
+        "AI-driven supply chain optimization",
+        "Advanced analytics and BI",
+        "Autonomous decision making systems",
+        "IoT integration with AI"
+      ]
+    }
+  }
+}

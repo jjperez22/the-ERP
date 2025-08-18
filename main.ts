@@ -16,6 +16,7 @@ import { AIInsightController } from './controllers/AIInsightController';
 import { AnalyticsController } from './controllers/AnalyticsController';
 import { SupplyChainController } from './controllers/SupplyChainController';
 import { VoiceAIController } from './controllers/VoiceAIController';
+import { PredictiveMaintenanceController } from './src/controllers/PredictiveMaintenanceController';
 
 // Services
 import { DatabaseService } from './services/DatabaseService';
@@ -25,6 +26,11 @@ import { AIOrchestrator } from './src/services/AIOrchestrator';
 import { RealTimeService } from './src/services/RealTimeService';
 import { AutomationService } from './src/services/AutomationService';
 import { ConstructionAIService } from './src/services/ConstructionAIService';
+import { SensorDataService } from './src/services/SensorDataService';
+import { AnomalyDetectionService } from './src/services/AnomalyDetectionService';
+import { HealthScoringService } from './src/services/HealthScoringService';
+import { MaintenanceAlertService } from './src/services/MaintenanceAlertService';
+import { EquipmentMonitoringEngine } from './src/services/EquipmentMonitoringEngine';
 
 class ConstructionERPApplication {
   private app: Warp;
@@ -73,6 +79,13 @@ class ConstructionERPApplication {
     this.app.register('constructionAI', () => this.constructionAI);
     this.app.register('realTimeService', () => this.realTimeService);
     this.app.register('automationService', () => this.automationService);
+    
+    // Register Predictive Maintenance services
+    this.app.register('sensorDataService', SensorDataService);
+    this.app.register('anomalyDetectionService', AnomalyDetectionService);
+    this.app.register('healthScoringService', HealthScoringService);
+    this.app.register('maintenanceAlertService', MaintenanceAlertService);
+    this.app.register('equipmentMonitoringEngine', EquipmentMonitoringEngine);
   }
 
   private setupControllers() {
@@ -87,6 +100,7 @@ class ConstructionERPApplication {
     this.app.controller(AnalyticsController);
     this.app.controller(SupplyChainController);
     this.app.controller(VoiceAIController);
+    this.app.controller(PredictiveMaintenanceController);
   }
 
   private setupEventHandlers() {

@@ -1,0 +1,79 @@
+{
+  "id": "20250101000000_init",
+  "prevId": "",
+  "version": "5.0.0",
+  "dialect": "postgresql",
+  "tables": {
+    "customers": {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name", 
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "text", 
+          "primaryKey": false,
+          "notNull": false
+        },
+        "phone": {
+          "name": "phone",
+          "type": "text",
+          "primaryKey": false, 
+          "notNull": false
+        },
+        "address": {
+          "name": "address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        "updatedAt": {
+          "name": "updatedAt", 
+          "type": "timestamp(3)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "customers_email_key": {
+          "name": "customers_email_key",
+          "columns": ["email"],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    }
+  },
+  "enums": {
+    "OrderStatus": {
+      "name": "OrderStatus",
+      "values": ["PENDING", "CONFIRMED", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"]
+    },
+    "ProjectStatus": {
+      "name": "ProjectStatus", 
+      "values": ["PLANNING", "ACTIVE", "ON_HOLD", "COMPLETED", "CANCELLED"]
+    },
+    "TransactionType": {
+      "name": "TransactionType",
+      "values": ["PURCHASE", "SALE", "ADJUSTMENT", "RETURN"]
+    }
+  }
+}

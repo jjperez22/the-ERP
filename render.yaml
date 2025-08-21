@@ -1,0 +1,37 @@
+services:
+  - type: web
+    name: construction-erp
+    env: node
+    plan: free
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: DATABASE_URL
+        fromDatabase:
+          name: construction-erp-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: LOG_LEVEL
+        value: info
+      - key: ENABLE_AI_FEATURES
+        value: true
+      - key: ENABLE_REAL_TIME
+        value: true
+      - key: ENABLE_AUTOMATION
+        value: true
+      - key: ENABLE_ANALYTICS
+        value: true
+
+databases:
+  - name: construction-erp-db
+    databaseName: construction_erp
+    user: construction_user
+    plan: free

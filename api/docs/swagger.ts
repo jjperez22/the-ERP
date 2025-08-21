@@ -24,7 +24,7 @@ const options = {
         description: 'Development server'
       },
       {
-        url: 'https://api.construction-erp.com',
+        url: 'https://thebest-jc70.onrender.com',
         description: 'Production server'
       }
     ],

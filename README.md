@@ -292,7 +292,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🆘 **Support**
 
 - **Documentation**: [docs.construction-erp.com](https://docs.construction-erp.com)
-- **Issues**: [GitHub Issues](https://github.com/construction-erp/ai-erp-system/issues)
+- **Issues**: [GitHub Issues](https://github.com/jjperez22/the-ERP/issues)
 - **Discord**: [Join our community](https://discord.gg/construction-erp)
 - **Email**: support@construction-erp.com
 
@@ -320,7 +320,7 @@ Ready to revolutionize your construction materials business?
 
 ```bash
 # Transform your business in minutes
-git clone https://github.com/construction-erp/ai-erp-system.git
+git clone https://github.com/jjperez22/the-ERP.git
 cd construction-erp-demo
 npm install
 npm run dev
@@ -333,4 +333,3 @@ npm run dev
 **Built with ❤️ for the construction industry**
 
 *Making construction materials management intelligent, automated, and beautiful.*
-# thebest

@@ -1,9 +1,30 @@
 
 // services/AIService.ts
-import { Injectable } from '@varld/warp';
-import { Product, DemandForecast, AIInsight, Customer } from '../models/DataModels';
+// Simple AI service
 
-@Injectable()
+interface DemandForecast {
+  productId: string;
+  locationId: string;
+  period: string;
+  forecastDate: Date;
+  predictedDemand: number;
+  confidence: number;
+  factors: any[];
+}
+
+interface AIInsight {
+  id: string;
+  type: string;
+  title: string;
+  description: string;
+  severity: string;
+  confidence: number;
+  actionable: boolean;
+  recommendations: string[];
+  data: any;
+  createdAt: Date;
+}
+
 export class AIService {
   private openaiKey: string;
 
@@ -11,7 +32,7 @@ export class AIService {
     this.openaiKey = process.env.OPENAI_API_KEY || '';
   }
 
-  async generateSKU(productData: Partial<Product>): Promise<string> {
+  async generateSKU(productData: any): Promise<string> {
     // AI-powered SKU generation based on product attributes
     const categoryCode = productData.category?.name?.substring(0, 3).toUpperCase() || 'GEN';
     const supplierCode = productData.supplier?.code?.substring(0, 2).toUpperCase() || 'XX';
@@ -20,7 +41,7 @@ export class AIService {
     return `${categoryCode}-${supplierCode}-${randomSuffix}`;
   }
 
-  async suggestPrice(productData: Partial<Product>): Promise<number> {
+  async suggestPrice(productData: any): Promise<number> {
     // ML-based price suggestion considering:
     // - Cost price
     // - Market conditions  

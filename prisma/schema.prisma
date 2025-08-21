@@ -1,0 +1,130 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  sku         String   @unique
+  name        String
+  category    String
+  price       Float
+  cost        Float
+  stock       Int
+  reorderPoint Int
+  supplierId  String
+  supplier    Supplier @relation(fields: [supplierId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("products")
+}
+
+model Supplier {
+  id       String    @id @default(cuid())
+  name     String
+  code     String    @unique
+  email    String?
+  phone    String?
+  address  String?
+  products Product[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("suppliers")
+}
+
+model Customer {
+  id        String   @id @default(cuid())
+  name      String
+  email     String?  @unique
+  phone     String?
+  address   String?
+  orders    Order[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("customers")
+}
+
+model Order {
+  id         String      @id @default(cuid())
+  orderNumber String     @unique
+  customerId String
+  customer   Customer   @relation(fields: [customerId], references: [id])
+  items      OrderItem[]
+  status     OrderStatus @default(PENDING)
+  totalAmount Float
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id])
+  productId String
+  quantity  Int
+  unitPrice Float
+  totalPrice Float
+
+  @@map("order_items")
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  customerId  String
+  status      ProjectStatus @default(PLANNING)
+  startDate   DateTime
+  endDate     DateTime?
+  budget      Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("projects")
+}
+
+model InventoryTransaction {
+  id        String      @id @default(cuid())
+  productId String
+  type      TransactionType
+  quantity  Int
+  reason    String?
+  createdAt DateTime    @default(now())
+  createdBy String
+
+  @@map("inventory_transactions")
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum ProjectStatus {
+  PLANNING
+  ACTIVE
+  ON_HOLD
+  COMPLETED
+  CANCELLED
+}
+
+enum TransactionType {
+  PURCHASE
+  SALE
+  ADJUSTMENT
+  RETURN
+}

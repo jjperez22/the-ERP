@@ -8,6 +8,72 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+    <!-- Login Page (initially visible) -->
+    <div id="loginPage" class="login-page">
+        <div class="login-container">
+            <div class="login-header">
+                <div class="login-brand">
+                    <div class="brand-icon">🏗️</div>
+                    <h1>ConstructERP</h1>
+                    <p>Smart ERP for Construction Materials</p>
+                </div>
+            </div>
+            
+            <div class="login-form-container">
+                <form id="loginForm" class="login-form">
+                    <h2>Welcome Back</h2>
+                    <p class="login-subtitle">Please sign in to your account</p>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" id="loginEmail" class="form-control" placeholder="Enter your email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" id="loginPassword" class="form-control" placeholder="Enter your password" required>
+                    </div>
+                    
+                    <div class="form-group form-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="rememberMe">
+                            <span class="checkmark"></span>
+                            Remember me
+                        </label>
+                        <a href="#" class="forgot-password">Forgot Password?</a>
+                    </div>
+                    
+                    <button type="submit" class="btn btn--primary btn--full-width login-btn">Sign In</button>
+                    
+                    <div class="login-divider">
+                        <span>Demo Accounts</span>
+                    </div>
+                    
+                    <div class="demo-accounts">
+                        <button type="button" class="demo-account-btn" data-role="admin" data-email="admin@constructerp.com">
+                            👨‍💼 Admin Login
+                            <small>Full access to all features</small>
+                        </button>
+                        <button type="button" class="demo-account-btn" data-role="manager" data-email="manager@constructerp.com">
+                            👩‍💼 Manager Login
+                            <small>Orders, inventory, and reports</small>
+                        </button>
+                        <button type="button" class="demo-account-btn" data-role="employee" data-email="employee@constructerp.com">
+                            👨‍🔧 Employee Login
+                            <small>Basic inventory and orders</small>
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="login-footer">
+                    <p>&copy; 2025 ConstructERP. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App (initially hidden) -->
+    <div id="mainApp" class="main-app" style="display: none;">
     <header class="header">
         <div class="header-container">
             <div class="header-brand">
@@ -145,10 +211,68 @@
         <div id="inventory" class="module">
             <div class="module-header">
                 <h2>Inventory Management</h2>
-                <div class="module-actions">
-                    <input type="text" class="form-control search-input" placeholder="Search products..." id="productSearch">
-                    <button class="btn btn--primary" id="addProductBtn">+ Add Product</button>
+            <div class="module-actions">
+                <input type="text" class="form-control search-input" placeholder="Search products..." id="productSearch">
+                <button class="btn btn--primary" id="addProductBtn">+ Add Product</button>
+                <button class="btn btn--secondary" id="uploadCSVBtn">📁 Upload CSV</button>
+                <button class="btn btn--outline" id="exportInventoryBtn">Export PDF</button>
+            </div>
+            
+            <!-- CSV Upload Section (initially hidden) -->
+            <div class="csv-upload-section" id="csvUploadSection" style="display: none;">
+                <div class="upload-container">
+                    <div class="upload-header">
+                        <h4>📊 Import Inventory from CSV</h4>
+                        <button class="btn btn--sm btn--outline" id="cancelUploadBtn">✕ Cancel</button>
+                    </div>
+                    <div class="upload-body">
+                        <div class="file-drop-zone" id="fileDropZone">
+                            <div class="drop-zone-content">
+                                <span class="drop-icon">📄</span>
+                                <p>Drag and drop your CSV file here, or <span class="browse-link" id="browseLink">browse to select</span></p>
+                                <input type="file" id="csvFileInput" accept=".csv" style="display: none;">
+                                <div class="file-requirements">
+                                    <small>Supported: CSV files with product data (SKU, Name, Category, Price, Stock, etc.)</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="upload-progress" id="uploadProgress" style="display: none;">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progressFill"></div>
+                            </div>
+                            <div class="progress-text" id="progressText">Processing...</div>
+                        </div>
+                    </div>
                 </div>
+            </div>
+            
+            <!-- CSV Preview Modal (will be shown after processing) -->
+            <div class="csv-preview-modal" id="csvPreviewModal" style="display: none;">
+                <div class="modal-backdrop"></div>
+                <div class="preview-content">
+                    <div class="preview-header">
+                        <h3>🤖 AI-Processed CSV Data Preview</h3>
+                        <button class="btn btn--sm btn--outline" id="cancelPreviewBtn">✕ Cancel</button>
+                    </div>
+                    <div class="preview-body">
+                        <div class="ai-analysis" id="aiAnalysis">
+                            <!-- AI analysis results will be populated here -->
+                        </div>
+                        <div class="preview-table-container">
+                            <table class="preview-table" id="previewTable">
+                                <!-- Parsed data preview will be populated here -->
+                            </table>
+                        </div>
+                    </div>
+                    <div class="preview-footer">
+                        <div class="import-summary" id="importSummary"></div>
+                        <div class="preview-actions">
+                            <button class="btn btn--outline" id="cancelImportBtn">Cancel</button>
+                            <button class="btn btn--primary" id="confirmImportBtn">✓ Import Products</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
             </div>
 
             <div class="filter-bar">
@@ -213,6 +337,64 @@
                 <div class="module-actions">
                     <input type="text" class="form-control search-input" placeholder="Search customers..." id="customerSearch">
                     <button class="btn btn--primary" id="addCustomerBtn">+ Add Customer</button>
+                    <button class="btn btn--secondary" id="uploadCustomerCSVBtn">📁 Upload CSV</button>
+                    <button class="btn btn--outline" id="exportCustomersBtn">Export PDF</button>
+                </div>
+            </div>
+            
+            <!-- Customer CSV Upload Section (initially hidden) -->
+            <div class="csv-upload-section" id="customerCSVUploadSection" style="display: none;">
+                <div class="upload-container">
+                    <div class="upload-header">
+                        <h4>👥 Import Customers from CSV</h4>
+                        <button class="btn btn--sm btn--outline" id="cancelCustomerUploadBtn">✕ Cancel</button>
+                    </div>
+                    <div class="upload-body">
+                        <div class="file-drop-zone" id="customerFileDropZone">
+                            <div class="drop-zone-content">
+                                <span class="drop-icon">📄</span>
+                                <p>Drag and drop your customer CSV file here, or <span class="browse-link" id="customerBrowseLink">browse to select</span></p>
+                                <input type="file" id="customerCSVFileInput" accept=".csv" style="display: none;">
+                                <div class="file-requirements">
+                                    <small>Supported: CSV files with customer data (Name, Type, Contact, Revenue, etc.)</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="upload-progress" id="customerUploadProgress" style="display: none;">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="customerProgressFill"></div>
+                            </div>
+                            <div class="progress-text" id="customerProgressText">Processing...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Customer CSV Preview Modal -->
+            <div class="csv-preview-modal" id="customerCSVPreviewModal" style="display: none;">
+                <div class="modal-backdrop"></div>
+                <div class="preview-content">
+                    <div class="preview-header">
+                        <h3>🤖 AI-Processed Customer CSV Preview</h3>
+                        <button class="btn btn--sm btn--outline" id="cancelCustomerPreviewBtn">✕ Cancel</button>
+                    </div>
+                    <div class="preview-body">
+                        <div class="ai-analysis" id="customerAIAnalysis">
+                            <!-- AI analysis results will be populated here -->
+                        </div>
+                        <div class="preview-table-container">
+                            <table class="preview-table" id="customerPreviewTable">
+                                <!-- Parsed data preview will be populated here -->
+                            </table>
+                        </div>
+                    </div>
+                    <div class="preview-footer">
+                        <div class="import-summary" id="customerImportSummary"></div>
+                        <div class="preview-actions">
+                            <button class="btn btn--outline" id="cancelCustomerImportBtn">Cancel</button>
+                            <button class="btn btn--primary" id="confirmCustomerImportBtn">✓ Import Customers</button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -260,7 +442,7 @@
                 <h2>Sales & Orders</h2>
                 <div class="module-actions">
                     <button class="btn btn--primary" id="newOrderBtn">+ New Order</button>
-                    <button class="btn btn--outline" id="exportOrdersBtn">Export</button>
+                    <button class="btn btn--outline" id="exportOrdersBtn">Export PDF</button>
                 </div>
             </div>
 
@@ -401,6 +583,8 @@
             </div>
         </div>
     </div>
+
+    </div> <!-- End of main-app -->
 
     <script src="app.js"></script>
 </body>

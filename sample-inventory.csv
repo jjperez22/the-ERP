@@ -1,0 +1,11 @@
+Product Name,SKU,Category,Unit Price,Stock Quantity,Supplier,Location
+"Steel Rebar #4 - 20ft","STL-RB4-001","Concrete",15.99,500,"MetalWorks Inc","Warehouse B"
+"Pine Board 2x8 - 12ft","PIN-2x8-012","Lumber",18.50,150,"Pine Valley Lumber","Warehouse A"
+"Asphalt Shingles - 3Tab","ASP-SHG-3TB","Roofing",95.75,75,"RoofMax Supply","Warehouse A"
+"Copper Wire 12AWG - 1000ft","COP-12G-100","Electrical",145.00,25,"ElectricPro","Warehouse C"
+"PVC Pipe 2in x 10ft","PVC-2IN-010","Plumbing",12.99,200,"PlumbMax","Warehouse B"
+"Spray Foam Insulation","SFI-CAN-001","Insulation",45.99,60,"FoamTech","Warehouse A"
+"Drywall 1/2in 4x8","DRY-HLF-4x8","Drywall",11.25,180,"WallBoard Co","Warehouse C"
+"Vinyl Plank Flooring","VIN-PLK-LUX","Flooring",3.25,1200,"FloorMaster","Warehouse B"
+"Portland Cement 80lb","POR-CEM-80","Concrete",6.50,300,"CementCorp","Warehouse B"
+"Treated Lumber 2x4 - 8ft","TRT-2x4-008","Lumber",8.99,400,"Pressure Pro","Warehouse A"

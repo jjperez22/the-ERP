@@ -1,0 +1,37 @@
+// Construction ERP - Main Styles
+// This imports the existing CSS file and adds TypeScript compatibility
+
+@import url('../../style.css');
+
+// Add any additional TypeScript-specific styles here
+.ts-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  
+  &::after {
+    content: '⚙️ Initializing TypeScript modules...';
+    color: #1FB8CD;
+    font-weight: 600;
+  }
+}
+
+// Enhanced PWA styles
+.pwa-enhanced {
+  .install-button {
+    background: linear-gradient(135deg, #1FB8CD 0%, #1A9CB8 100%);
+    border: none;
+    border-radius: 12px;
+    padding: 12px 24px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(31, 184, 205, 0.3);
+    }
+  }
+}

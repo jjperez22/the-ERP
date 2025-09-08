@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module Configuration Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        /* Configuration Panel Container */
+        .config-panel {
+            max-width: 800px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        /* Header */
+        .config-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .module-icon-config {
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .config-title {
+            flex: 1;
+        }
+        
+        .config-title h2 {
+            font-size: 1.5rem;
+            margin-bottom: 4px;
+        }
+        
+        .config-subtitle {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        
+        .config-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        /* Navigation Tabs */
+        .config-nav {
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            overflow-x: auto;
+        }
+        
+        .nav-tab {
+            padding: 16px 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #6c757d;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .nav-tab:hover {
+            background: rgba(0,123,255,0.05);
+            color: #007bff;
+        }
+        
+        .nav-tab.active {
+            color: #007bff;
+            border-bottom-color: #007bff;
+            background: white;
+        }
+        
+        /* Content Area */
+        .config-content {
+            padding: 24px;
+            min-height: 400px;
+        }
+        
+        .tab-panel {
+            display: none;
+        }
+        
+        .tab-panel.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Form Sections */
+        .form-section {
+            margin-bottom: 32px;
+        }
+        
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .form-row {
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+        
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .form-select {
+            appearance: none;
+            background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"><path fill="%23666" d="M2 0L0 2h4zm0 5L0 3h4z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            background-size: 12px;
+            padding-right: 32px;
+        }
+        
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 24px;
+        }
+        
+        .toggle-input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            border-radius: 24px;
+            transition: 0.3s;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+        
+        .toggle-input:checked + .toggle-slider {
+            background-color: #007bff;
+        }
+        
+        .toggle-input:checked + .toggle-slider:before {
+            transform: translateX(24px);
+        }
+        
+        /* Form Layout */
+        .form-cols {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .form-cols-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+        }
+        
+        /* Info Cards */
+        .info-card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .info-card-title {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .info-card-content {
+            font-size: 14px;
+            color: #6c757d;
+            line-height: 1.4;
+        }
+        
+        /* Status Badges */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+        
+        .status-enabled {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-disabled {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .status-warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #1e7e34;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        
+        /* Footer */
+        .config-footer {
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .footer-info {
+            color: #6c757d;
+            font-size: 13px;
+        }
+        
+        .footer-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .config-panel {
+                margin: 10px;
+                border-radius: 8px;
+            }
+            
+            .config-header {
+                padding: 16px;
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .config-content {
+                padding: 16px;
+            }
+            
+            .form-cols,
+            .form-cols-3 {
+                grid-template-columns: 1fr;
+            }
+            
+            .config-nav {
+                flex-wrap: wrap;
+            }
+            
+            .nav-tab {
+                flex: 1;
+                text-align: center;
+                min-width: 120px;
+            }
+            
+            .config-footer {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="config-panel">
+        <!-- Header -->
+        <div class="config-header">
+            <div class="module-icon-config">📊</div>
+            <div class="config-title">
+                <h2>Analytics Dashboard</h2>
+                <div class="config-subtitle">Advanced analytics and reporting module</div>
+            </div>
+            <div class="config-actions">
+                <span class="status-badge status-enabled">Enabled</span>
+                <button class="btn btn-secondary" id="closeConfig">✕</button>
+            </div>
+        </div>
+        
+        <!-- Navigation Tabs -->
+        <div class="config-nav">
+            <button class="nav-tab active" data-tab="general">⚙️ General</button>
+            <button class="nav-tab" data-tab="permissions">🔒 Permissions</button>
+            <button class="nav-tab" data-tab="advanced">🔧 Advanced</button>
+            <button class="nav-tab" data-tab="about">ℹ️ About</button>
+        </div>
+        
+        <!-- Content Area -->
+        <div class="config-content">
+            <!-- General Tab -->
+            <div class="tab-panel active" id="general">
+                <div class="form-section">
+                    <h3 class="section-title">Basic Settings</h3>
+                    
+                    <div class="form-cols">
+                        <div class="form-group">
+                            <label class="form-label" for="moduleName">Module Name</label>
+                            <input type="text" class="form-input" id="moduleName" value="Analytics Dashboard">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="moduleVersion">Version</label>
+                            <input type="text" class="form-input" id="moduleVersion" value="1.2.0" readonly>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="moduleDescription">Description</label>
+                        <textarea class="form-input form-textarea" id="moduleDescription" placeholder="Enter module description...">Advanced analytics and reporting dashboard with interactive charts and real-time data visualization.</textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Enable Module</label>
+                            <label class="toggle-switch">
+                                <input type="checkbox" class="toggle-input" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3 class="section-title">Display Settings</h3>
+                    
+                    <div class="form-cols">
+                        <div class="form-group">
+                            <label class="form-label" for="refreshInterval">Auto Refresh (seconds)</label>
+                            <input type="number" class="form-input" id="refreshInterval" value="30" min="10" max="300">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="defaultView">Default View</label>
+                            <select class="form-input form-select" id="defaultView">
+                                <option value="dashboard">Dashboard</option>
+                                <option value="reports">Reports</option>
+                                <option value="charts">Charts</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Show Advanced Features</label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" class="toggle-input">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Permissions Tab -->
+            <div class="tab-panel" id="permissions">
+                <div class="info-card">
+                    <div class="info-card-title">
+                        🔒 Permission Management
+                    </div>
+                    <div class="info-card-content">
+                        Configure what this module can access and which users can interact with it.
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3 class="section-title">Data Access</h3>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Read Project Data</label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" class="toggle-input" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Write Project Data</label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" class="toggle-input">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Access Financial Data</label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" class="toggle-input" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3 class="section-title">User Access</h3>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="allowedRoles">Allowed User Roles</label>
+                        <select class="form-input form-select" id="allowedRoles" multiple size="4">
+                            <option value="admin" selected>Administrator</option>
+                            <option value="manager" selected>Project Manager</option>
+                            <option value="analyst" selected>Business Analyst</option>
+                            <option value="user">Standard User</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Advanced Tab -->
+            <div class="tab-panel" id="advanced">
+                <div class="info-card">
+                    <div class="info-card-title">
+                        ⚠️ Advanced Configuration
+                    </div>
+                    <div class="info-card-content">
+                        These settings are for advanced users only. Incorrect values may cause module malfunction.
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3 class="section-title">Performance Settings</h3>
+                    
+                    <div class="form-cols">
+                        <div class="form-group">
+                            <label class="form-label" for="cacheSize">Cache Size (MB)</label>
+                            <input type="number" class="form-input" id="cacheSize" value="100" min="10" max="1000">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="maxRecords">Max Records</label>
+                            <input type="number" class="form-input" id="maxRecords" value="10000" min="100" max="100000">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Enable Debug Mode</label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" class="toggle-input">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3 class="section-title">Custom Configuration</h3>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="customConfig">JSON Configuration</label>
+                        <textarea class="form-input form-textarea" id="customConfig" placeholder="Enter custom JSON configuration..." style="min-height: 120px; font-family: monospace;">{
+  "theme": "default",
+  "animations": true,
+  "export_formats": ["pdf", "excel", "csv"]
+}</textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- About Tab -->
+            <div class="tab-panel" id="about">
+                <div class="info-card">
+                    <div class="info-card-title">
+                        📊 Analytics Dashboard v1.2.0
+                    </div>
+                    <div class="info-card-content">
+                        A comprehensive analytics solution for construction project management with real-time reporting capabilities.
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3 class="section-title">Module Information</h3>
+                    
+                    <div class="form-cols">
+                        <div class="form-group">
+                            <label class="form-label">Author</label>
+                            <input type="text" class="form-input" value="ERP Development Team" readonly>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">License</label>
+                            <input type="text" class="form-input" value="MIT License" readonly>
+                        </div>
+                    </div>
+                    
+                    <div class="form-cols">
+                        <div class="form-group">
+                            <label class="form-label">Installation Date</label>
+                            <input type="text" class="form-input" value="2025-08-15 14:30:22" readonly>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Last Updated</label>
+                            <input type="text" class="form-input" value="2025-08-20 10:15:48" readonly>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3 class="section-title">Dependencies</h3>
+                    
+                    <div class="info-card">
+                        <div class="info-card-title">
+                            🔗 Required Modules
+                        </div>
+                        <div class="info-card-content">
+                            <ul style="margin: 8px 0; padding-left: 20px;">
+                                <li>Chart Library v2.3.1 <span class="status-badge status-enabled">Installed</span></li>
+                                <li>UI Framework v3.2.1 <span class="status-badge status-enabled">Installed</span></li>
+                                <li>Authentication Module v1.2.5 <span class="status-badge status-enabled">Installed</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="config-footer">
+            <div class="footer-info">
+                Last saved: Never • Changes will be saved automatically
+            </div>
+            <div class="footer-actions">
+                <button class="btn btn-secondary" id="resetConfig">Reset</button>
+                <button class="btn btn-success" id="saveConfig">Save Changes</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Module Configuration Panel JavaScript
+        class ModuleConfigPanel {
+            constructor() {
+                this.currentTab = 'general';
+                this.unsavedChanges = false;
+                this.originalConfig = {};
+                this.currentConfig = {};
+                
+                this.init();
+            }
+            
+            init() {
+                this.bindEvents();
+                this.loadConfiguration();
+                this.updateFooterStatus();
+                
+                // Auto-save functionality
+                this.startAutoSave();
+            }
+            
+            bindEvents() {
+                // Tab navigation
+                const tabButtons = document.querySelectorAll('.nav-tab');
+                tabButtons.forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        this.switchTab(e.target.dataset.tab);
+                    });
+                });
+                
+                // Form change detection
+                const formElements = document.querySelectorAll('input, select, textarea');
+                formElements.forEach(element => {
+                    element.addEventListener('change', () => {
+                        this.markAsChanged();
+                        this.validateForm();
+                    });
+                    
+                    // Real-time validation for text inputs
+                    if (element.type === 'text' || element.type === 'number' || element.tagName === 'TEXTAREA') {
+                        element.addEventListener('input', () => {
+                            this.validateField(element);
+                        });
+                    }
+                });
+                
+                // Button actions
+                document.getElementById('saveConfig').addEventListener('click', () => {
+                    this.saveConfiguration();
+                });
+                
+                document.getElementById('resetConfig').addEventListener('click', () => {
+                    this.resetConfiguration();
+                });
+                
+                document.getElementById('closeConfig').addEventListener('click', () => {
+                    this.closePanel();
+                });
+                
+                // Custom JSON validation
+                const jsonConfig = document.getElementById('customConfig');
+                if (jsonConfig) {
+                    jsonConfig.addEventListener('blur', () => {
+                        this.validateJSON(jsonConfig);
+                    });
+                }
+                
+                // Prevent form submission
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && e.ctrlKey) {
+                        e.preventDefault();
+                        this.saveConfiguration();
+                    }
+                });
+            }
+            
+            switchTab(tabName) {
+                if (this.currentTab === tabName) return;
+                
+                // Update tab buttons
+                document.querySelectorAll('.nav-tab').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+                
+                // Update tab panels
+                document.querySelectorAll('.tab-panel').forEach(panel => {
+                    panel.classList.remove('active');
+                });
+                
+                // Add slight delay for smooth transition
+                setTimeout(() => {
+                    document.getElementById(tabName).classList.add('active');
+                }, 100);
+                
+                this.currentTab = tabName;
+                
+                // Update URL hash (optional)
+                window.location.hash = tabName;
+            }
+            
+            loadConfiguration() {
+                // Simulate loading configuration from server
+                // In a real application, this would be an API call
+                const defaultConfig = {
+                    moduleName: 'Analytics Dashboard',
+                    moduleVersion: '1.2.0',
+                    moduleDescription: 'Advanced analytics and reporting dashboard with interactive charts and real-time data visualization.',
+                    enabled: true,
+                    refreshInterval: 30,
+                    defaultView: 'dashboard',
+                    showAdvanced: false,
+                    permissions: {
+                        readProjectData: true,
+                        writeProjectData: false,
+                        accessFinancialData: true
+                    },
+                    allowedRoles: ['admin', 'manager', 'analyst'],
+                    cacheSize: 100,
+                    maxRecords: 10000,
+                    debugMode: false,
+                    customConfig: {
+                        theme: 'default',
+                        animations: true,
+                        export_formats: ['pdf', 'excel', 'csv']
+                    }
+                };
+                
+                this.originalConfig = { ...defaultConfig };
+                this.currentConfig = { ...defaultConfig };
+                
+                this.populateForm();
+            }
+            
+            populateForm() {
+                const config = this.currentConfig;
+                
+                // Basic settings
+                this.setFieldValue('moduleName', config.moduleName);
+                this.setFieldValue('moduleVersion', config.moduleVersion);
+                this.setFieldValue('moduleDescription', config.moduleDescription);
+                this.setToggleValue('input[type="checkbox"]', config.enabled);
+                
+                // Display settings
+                this.setFieldValue('refreshInterval', config.refreshInterval);
+                this.setFieldValue('defaultView', config.defaultView);
+                
+                // Permissions
+                const toggles = {
+                    'readProjectData': config.permissions.readProjectData,
+                    'writeProjectData': config.permissions.writeProjectData,
+                    'accessFinancialData': config.permissions.accessFinancialData
+                };
+                
+                // Advanced settings
+                this.setFieldValue('cacheSize', config.cacheSize);
+                this.setFieldValue('maxRecords', config.maxRecords);
+                this.setFieldValue('customConfig', JSON.stringify(config.customConfig, null, 2));
+            }
+            
+            setFieldValue(fieldId, value) {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.value = value;
+                }
+            }
+            
+            setToggleValue(selector, value) {
+                const toggle = document.querySelector(selector);
+                if (toggle) {
+                    toggle.checked = value;
+                }
+            }
+            
+            validateForm() {
+                let isValid = true;
+                const errors = [];
+                
+                // Validate refresh interval
+                const refreshInterval = document.getElementById('refreshInterval');
+                if (refreshInterval) {
+                    const value = parseInt(refreshInterval.value);
+                    if (value < 10 || value > 300) {
+                        this.showFieldError(refreshInterval, 'Refresh interval must be between 10 and 300 seconds');
+                        isValid = false;
+                    } else {
+                        this.clearFieldError(refreshInterval);
+                    }
+                }
+                
+                // Validate cache size
+                const cacheSize = document.getElementById('cacheSize');
+                if (cacheSize) {
+                    const value = parseInt(cacheSize.value);
+                    if (value < 10 || value > 1000) {
+                        this.showFieldError(cacheSize, 'Cache size must be between 10 and 1000 MB');
+                        isValid = false;
+                    } else {
+                        this.clearFieldError(cacheSize);
+                    }
+                }
+                
+                // Validate max records
+                const maxRecords = document.getElementById('maxRecords');
+                if (maxRecords) {
+                    const value = parseInt(maxRecords.value);
+                    if (value < 100 || value > 100000) {
+                        this.showFieldError(maxRecords, 'Max records must be between 100 and 100,000');
+                        isValid = false;
+                    } else {
+                        this.clearFieldError(maxRecords);
+                    }
+                }
+                
+                // Update save button state
+                const saveButton = document.getElementById('saveConfig');
+                if (saveButton) {
+                    saveButton.disabled = !isValid;
+                    if (!isValid) {
+                        saveButton.classList.add('btn-disabled');
+                    } else {
+                        saveButton.classList.remove('btn-disabled');
+                    }
+                }
+                
+                return isValid;
+            }
+            
+            validateField(field) {
+                if (field.type === 'number') {
+                    const value = parseInt(field.value);
+                    const min = parseInt(field.getAttribute('min'));
+                    const max = parseInt(field.getAttribute('max'));
+                    
+                    if (min && value < min) {
+                        this.showFieldError(field, `Value must be at least ${min}`);
+                        return false;
+                    }
+                    
+                    if (max && value > max) {
+                        this.showFieldError(field, `Value must be no more than ${max}`);
+                        return false;
+                    }
+                    
+                    this.clearFieldError(field);
+                }
+                
+                return true;
+            }
+            
+            validateJSON(field) {
+                try {
+                    const jsonValue = field.value.trim();
+                    if (jsonValue) {
+                        JSON.parse(jsonValue);
+                        this.clearFieldError(field);
+                        return true;
+                    }
+                } catch (error) {
+                    this.showFieldError(field, 'Invalid JSON format');
+                    return false;
+                }
+            }
+            
+            showFieldError(field, message) {
+                this.clearFieldError(field);
+                
+                field.style.borderColor = '#dc3545';
+                
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'field-error';
+                errorDiv.textContent = message;
+                errorDiv.style.cssText = `
+                    color: #dc3545;
+                    font-size: 12px;
+                    margin-top: 4px;
+                    display: flex;
+                    align-items: center;
+                    gap: 4px;
+                `;
+                errorDiv.innerHTML = `⚠️ ${message}`;
+                
+                field.parentNode.appendChild(errorDiv);
+            }
+            
+            clearFieldError(field) {
+                field.style.borderColor = '';
+                const existingError = field.parentNode.querySelector('.field-error');
+                if (existingError) {
+                    existingError.remove();
+                }
+            }
+            
+            markAsChanged() {
+                this.unsavedChanges = true;
+                this.updateFooterStatus();
+            }
+            
+            updateFooterStatus() {
+                const footerInfo = document.querySelector('.footer-info');
+                const saveButton = document.getElementById('saveConfig');
+                
+                if (this.unsavedChanges) {
+                    footerInfo.innerHTML = '💾 <strong>Unsaved changes</strong> • Changes will be saved automatically';
+                    footerInfo.style.color = '#856404';
+                    saveButton.classList.add('btn-warning');
+                    saveButton.innerHTML = '💾 Save Changes';
+                } else {
+                    const now = new Date().toLocaleString();
+                    footerInfo.innerHTML = `✅ Last saved: ${now} • All changes saved`;
+                    footerInfo.style.color = '#155724';
+                    saveButton.classList.remove('btn-warning');
+                    saveButton.innerHTML = '💾 Save Changes';
+                }
+            }
+            
+            saveConfiguration() {
+                if (!this.validateForm()) {
+                    this.showNotification('Please fix validation errors before saving.', 'error');
+                    return;
+                }
+                
+                // Show loading state
+                const saveButton = document.getElementById('saveConfig');
+                const originalText = saveButton.innerHTML;
+                saveButton.innerHTML = '⏳ Saving...';
+                saveButton.disabled = true;
+                
+                // Simulate API call
+                setTimeout(() => {
+                    try {
+                        // Collect form data
+                        this.collectFormData();
+                        
+                        // In a real application, this would be an API call
+                        console.log('Saving configuration:', this.currentConfig);
+                        
+                        this.unsavedChanges = false;
+                        this.updateFooterStatus();
+                        
+                        this.showNotification('Configuration saved successfully!', 'success');
+                        
+                        // Update original config
+                        this.originalConfig = { ...this.currentConfig };
+                        
+                    } catch (error) {
+                        console.error('Save error:', error);
+                        this.showNotification('Error saving configuration. Please try again.', 'error');
+                    } finally {
+                        saveButton.innerHTML = originalText;
+                        saveButton.disabled = false;
+                    }
+                }, 1500);
+            }
+            
+            collectFormData() {
+                // Collect all form data into currentConfig
+                this.currentConfig = {
+                    ...this.currentConfig,
+                    moduleName: document.getElementById('moduleName')?.value || '',
+                    moduleDescription: document.getElementById('moduleDescription')?.value || '',
+                    refreshInterval: parseInt(document.getElementById('refreshInterval')?.value || '30'),
+                    defaultView: document.getElementById('defaultView')?.value || 'dashboard',
+                    cacheSize: parseInt(document.getElementById('cacheSize')?.value || '100'),
+                    maxRecords: parseInt(document.getElementById('maxRecords')?.value || '10000')
+                };
+                
+                // Parse custom JSON config
+                try {
+                    const customConfigText = document.getElementById('customConfig')?.value;
+                    if (customConfigText) {
+                        this.currentConfig.customConfig = JSON.parse(customConfigText);
+                    }
+                } catch (error) {
+                    console.warn('Invalid custom configuration JSON');
+                }
+            }
+            
+            resetConfiguration() {
+                if (confirm('Are you sure you want to reset all settings to their original values?')) {
+                    this.currentConfig = { ...this.originalConfig };
+                    this.populateForm();
+                    this.unsavedChanges = false;
+                    this.updateFooterStatus();
+                    this.showNotification('Configuration reset to original values.', 'info');
+                }
+            }
+            
+            closePanel() {
+                if (this.unsavedChanges) {
+                    if (confirm('You have unsaved changes. Are you sure you want to close?')) {
+                        window.close();
+                    }
+                } else {
+                    window.close();
+                }
+            }
+            
+            showNotification(message, type = 'info') {
+                // Remove existing notifications
+                const existingNotification = document.querySelector('.notification');
+                if (existingNotification) {
+                    existingNotification.remove();
+                }
+                
+                const notification = document.createElement('div');
+                notification.className = `notification notification-${type}`;
+                
+                const colors = {
+                    success: { bg: '#d4edda', border: '#c3e6cb', text: '#155724' },
+                    error: { bg: '#f8d7da', border: '#f5c6cb', text: '#721c24' },
+                    warning: { bg: '#fff3cd', border: '#ffeaa7', text: '#856404' },
+                    info: { bg: '#d1ecf1', border: '#bee5eb', text: '#0c5460' }
+                };
+                
+                const color = colors[type] || colors.info;
+                
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    padding: 12px 16px;
+                    background: ${color.bg};
+                    border: 1px solid ${color.border};
+                    color: ${color.text};
+                    border-radius: 6px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                    z-index: 1000;
+                    font-size: 14px;
+                    font-weight: 500;
+                    max-width: 300px;
+                    animation: slideInRight 0.3s ease;
+                `;
+                
+                const icons = {
+                    success: '✅',
+                    error: '❌',
+                    warning: '⚠️',
+                    info: 'ℹ️'
+                };
+                
+                notification.innerHTML = `${icons[type] || icons.info} ${message}`;
+                
+                document.body.appendChild(notification);
+                
+                // Auto-remove after 4 seconds
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.style.animation = 'slideOutRight 0.3s ease forwards';
+                        setTimeout(() => notification.remove(), 300);
+                    }
+                }, 4000);
+            }
+            
+            startAutoSave() {
+                // Auto-save every 30 seconds if there are changes
+                setInterval(() => {
+                    if (this.unsavedChanges && this.validateForm()) {
+                        this.saveConfiguration();
+                    }
+                }, 30000);
+            }
+        }
+        
+        // Add notification animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            
+            @keyframes slideOutRight {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+            
+            .btn-disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+            }
+            
+            .btn-warning {
+                background: #ffc107 !important;
+                color: #212529 !important;
+            }
+            
+            .btn-warning:hover {
+                background: #e0a800 !important;
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Initialize the configuration panel when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            new ModuleConfigPanel();
+        });
+        
+        // Handle browser back/forward with tabs
+        window.addEventListener('hashchange', () => {
+            const hash = window.location.hash.substring(1);
+            if (hash && ['general', 'permissions', 'advanced', 'about'].includes(hash)) {
+                document.querySelector(`[data-tab="${hash}"]`)?.click();
+            }
+        });
+        
+        // Load initial tab from URL hash
+        if (window.location.hash) {
+            const hash = window.location.hash.substring(1);
+            if (['general', 'permissions', 'advanced', 'about'].includes(hash)) {
+                setTimeout(() => {
+                    document.querySelector(`[data-tab="${hash}"]`)?.click();
+                }, 100);
+            }
+        }
+    </script>
+</body>
+</html>

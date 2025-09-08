@@ -9,19 +9,54 @@ datasource db {
 }
 
 model Product {
-  id          String   @id @default(cuid())
-  sku         String   @unique
-  name        String
-  category    String
-  price       Float
-  cost        Float
-  stock       Int
-  reorderPoint Int
-  supplierId  String
-  supplier    Supplier @relation(fields: [supplierId], references: [id])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id              String   @id @default(cuid())
+  sku             String   @unique
+  name            String
+  description     String?
+  category        String
+  subcategory     String?
+  brand           String?
+  model           String?
+  price           Float
+  cost            Float
+  stock           Int
+  reservedStock   Int      @default(0)
+  availableStock  Int      @default(0)
+  reorderPoint    Int
+  reorderQuantity Int      @default(0)
+  maxStock        Int?
+  minStock        Int?
+  unit            String   @default("pcs")
+  weight          Float?
+  dimensions      String?
+  location        String?
+  barcode         String?
+  isActive        Boolean  @default(true)
+  isTracked       Boolean  @default(true)
+  tags            String[] @default([])
+  notes           String?
+  supplierId      String
+  supplier        Supplier @relation(fields: [supplierId], references: [id])
+  customFields    Json?    // For flexible custom attributes
+  images          String[] @default([])
+  documents       String[] @default([])
+  lastAuditDate   DateTime?
+  lastCountDate   DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  createdBy       String?
+  updatedBy       String?
 
+  // Relations
+  transactions    InventoryTransaction[]
+  orderItems      OrderItem[]
+
+  // Performance indexes
+  @@index([category, isActive], name: "idx_product_category_active")
+  @@index([stock, reorderPoint], name: "idx_product_stock_levels")
+  @@index([supplierId], name: "idx_product_supplier")
+  @@index([createdAt], name: "idx_product_created")
+  @@index([name], name: "idx_product_name")
   @@map("products")
 }
 
@@ -49,6 +84,8 @@ model Customer {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([name], name: "idx_customer_name")
+  @@index([createdAt], name: "idx_customer_created")
   @@map("customers")
 }
 
@@ -63,6 +100,10 @@ model Order {
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
 
+  @@index([customerId], name: "idx_order_customer")
+  @@index([status], name: "idx_order_status")
+  @@index([createdAt], name: "idx_order_created")
+  @@index([status, createdAt], name: "idx_order_status_date")
   @@map("orders")
 }
 
@@ -71,6 +112,7 @@ model OrderItem {
   orderId   String
   order     Order   @relation(fields: [orderId], references: [id])
   productId String
+  product   Product @relation(fields: [productId], references: [id])
   quantity  Int
   unitPrice Float
   totalPrice Float
@@ -96,6 +138,7 @@ model Project {
 model InventoryTransaction {
   id        String      @id @default(cuid())
   productId String
+  product   Product     @relation(fields: [productId], references: [id])
   type      TransactionType
   quantity  Int
   reason    String?

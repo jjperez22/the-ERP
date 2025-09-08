@@ -11,6 +11,9 @@ import dotenv from 'dotenv';
 import productRoutes from './api/routes/products';
 import authRoutes from './api/routes/auth';
 import projectRoutes from './api/routes/projects';
+import inventoryRoutes from './api/routes/inventory';
+import customerRoutes from './api/routes/customers';
+import orderRoutes from './api/routes/orders';
 
 // Import Swagger setup
 import { setupSwagger } from './api/docs/swagger';
@@ -68,12 +71,15 @@ class ConstructionERPApplication {
 
   private setupRoutes() {
     // Setup Swagger documentation
-    setupSwagger(this.app);
+    setupSwagger(this.app as any);
     
     // Mount RESTful API routes
     this.app.use('/api/products', productRoutes);
     this.app.use('/api/auth', authRoutes);
     this.app.use('/api/projects', projectRoutes);
+    this.app.use('/api/inventory', inventoryRoutes);
+    this.app.use('/api/customers', customerRoutes);
+    this.app.use('/api/orders', orderRoutes);
 
     // Health check endpoint
     this.app.get('/health', (req, res) => {
@@ -106,7 +112,7 @@ class ConstructionERPApplication {
         const data = await this.analyticsController.getDashboardData();
         res.json({ success: true, data });
       } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        res.status(500).json({ success: false, error: (error as Error).message });
       }
     });
 
@@ -115,7 +121,7 @@ class ConstructionERPApplication {
         const data = await this.analyticsController.getSalesPerformance();
         res.json({ success: true, data });
       } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        res.status(500).json({ success: false, error: (error as Error).message });
       }
     });
 
@@ -125,7 +131,7 @@ class ConstructionERPApplication {
         const insights = await this.aiService.generateInventoryRecommendations('all');
         res.json({ success: true, data: insights });
       } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        res.status(500).json({ success: false, error: (error as Error).message });
       }
     });
 
@@ -136,7 +142,7 @@ class ConstructionERPApplication {
         const forecast = await this.aiService.generateDemandForecast(productId, horizon);
         res.json({ success: true, data: forecast });
       } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        res.status(500).json({ success: false, error: (error as Error).message });
       }
     });
 
@@ -145,7 +151,7 @@ class ConstructionERPApplication {
         const suggestedPrice = await this.aiService.suggestPrice(req.body);
         res.json({ success: true, data: { suggestedPrice } });
       } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        res.status(500).json({ success: false, error: (error as Error).message });
       }
     });
 
@@ -155,19 +161,20 @@ class ConstructionERPApplication {
         const healthStatus = this.advancedAI.getHealthStatus();
         res.json({ success: true, data: healthStatus });
       } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        res.status(500).json({ success: false, error: (error as Error).message });
       }
     });
 
-    this.app.post('/api/ai/advanced/seasonal-forecast', async (req, res) => {
+    this.app.post('/api/ai/advanced/seasonal-forecast', async (req, res): Promise<void> => {
       try {
         const { category, weatherData, economicIndicators, parameters } = req.body;
         
         if (!category || !weatherData || !economicIndicators) {
-          return res.status(400).json({
+          res.status(400).json({
             success: false,
             error: 'Missing required fields: category, weatherData, economicIndicators'
           });
+          return;
         }
         
         const forecast = await this.advancedAI.generateSeasonalDemandForecast(
@@ -180,21 +187,22 @@ class ConstructionERPApplication {
       } catch (error) {
         res.status(500).json({ 
           success: false, 
-          error: error.message,
+          error: (error as Error).message,
           code: 'SEASONAL_FORECAST_ERROR'
         });
       }
     });
 
-    this.app.post('/api/ai/advanced/dynamic-pricing', async (req, res) => {
+    this.app.post('/api/ai/advanced/dynamic-pricing', async (req, res): Promise<void> => {
       try {
         const { productId, marketConditions } = req.body;
         
         if (!productId || !marketConditions) {
-          return res.status(400).json({
+          res.status(400).json({
             success: false,
             error: 'Missing required fields: productId, marketConditions'
           });
+          return;
         }
         
         const analysis = await this.advancedAI.analyzeDynamicPricing(productId, marketConditions);
@@ -202,21 +210,22 @@ class ConstructionERPApplication {
       } catch (error) {
         res.status(500).json({ 
           success: false, 
-          error: error.message,
+          error: (error as Error).message,
           code: 'DYNAMIC_PRICING_ERROR'
         });
       }
     });
 
-    this.app.post('/api/ai/advanced/supplier-risk', async (req, res) => {
+    this.app.post('/api/ai/advanced/supplier-risk', async (req, res): Promise<void> => {
       try {
         const { supplierId, includeAlternatives = true } = req.body;
         
         if (!supplierId) {
-          return res.status(400).json({
+          res.status(400).json({
             success: false,
             error: 'Missing required field: supplierId'
           });
+          return;
         }
         
         const assessment = await this.advancedAI.assessSupplierRisk(supplierId, includeAlternatives);
@@ -224,7 +233,7 @@ class ConstructionERPApplication {
       } catch (error) {
         res.status(500).json({ 
           success: false, 
-          error: error.message,
+          error: (error as Error).message,
           code: 'SUPPLIER_RISK_ERROR'
         });
       }

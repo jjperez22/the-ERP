@@ -1,5 +1,5 @@
 // src/services/IntelligentAutomationEngine.ts
-import { Injectable } from '@varld/warp';
+import { Service } from '@varld/warp';
 import { EventEmitter } from 'events';
 import { OpenAI } from 'openai';
 
@@ -99,7 +99,7 @@ export interface ProcessOptimization {
   estimatedROI: number;
 }
 
-@Injectable()
+@Service()
 export class IntelligentAutomationEngine extends EventEmitter {
   private workflows: Map<string, WorkflowRule> = new Map();
   private executionQueue: Map<string, any[]> = new Map();
@@ -133,7 +133,7 @@ export class IntelligentAutomationEngine extends EventEmitter {
       description: 'Automatically reorders inventory based on AI predictions and market conditions',
       triggers: [
         { type: 'ai_prediction', source: 'demand_forecasting', confidenceThreshold: 0.8 },
-        { type: 'condition', condition: 'inventory_level < reorder_point' }
+        { type: 'condition', source: 'inventory_monitoring', condition: 'inventory_level < reorder_point' }
       ],
       conditions: [
         { field: 'supplier_reliability', operator: 'greater_than', value: 0.85 },
@@ -176,11 +176,11 @@ export class IntelligentAutomationEngine extends EventEmitter {
       name: 'AI Dynamic Pricing Engine',
       description: 'Continuously optimizes pricing based on market conditions and demand',
       triggers: [
-        { type: 'schedule', schedule: '0 */6 * * *' }, // Every 6 hours
+        { type: 'schedule', source: 'system_scheduler', schedule: '0 */6 * * *' }, // Every 6 hours
         { type: 'event', source: 'market_conditions', eventType: 'significant_change' }
       ],
       conditions: [
-        { field: 'market_volatility', operator: 'ai_suggests', aiConfidence: 0.8 },
+        { field: 'market_volatility', operator: 'ai_suggests', value: 'high_volatility', aiConfidence: 0.8 },
         { field: 'competitive_pressure', operator: 'greater_than', value: 0.6 }
       ],
       actions: [
@@ -199,7 +199,7 @@ export class IntelligentAutomationEngine extends EventEmitter {
       description: 'Schedules maintenance based on AI predictions to prevent failures',
       triggers: [
         { type: 'ai_prediction', source: 'equipment_health_model', confidenceThreshold: 0.9 },
-        { type: 'condition', condition: 'equipment_risk_score > 0.8' }
+        { type: 'condition', source: 'equipment_monitoring', condition: 'equipment_risk_score > 0.8' }
       ],
       conditions: [
         { field: 'maintenance_budget', operator: 'greater_than', value: 1000 },
@@ -300,7 +300,8 @@ export class IntelligentAutomationEngine extends EventEmitter {
       // Learn from failure
       await this.learningEngine.learnFromFailure(workflow, context, error);
 
-      this.emit('workflow_error', { workflowId, executionId, error: error.message });
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.emit('workflow_error', { workflowId, executionId, error: errorMessage });
       throw error;
     }
   }
@@ -468,7 +469,8 @@ export class IntelligentAutomationEngine extends EventEmitter {
 
       return { success: true, action: action.type, result };
     } catch (error) {
-      return { success: false, action: action.type, error: error.message };
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      return { success: false, action: action.type, error: errorMessage };
     }
   }
 

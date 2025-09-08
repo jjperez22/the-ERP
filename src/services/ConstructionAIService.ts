@@ -1,5 +1,5 @@
 // src/services/ConstructionAIService.ts
-import { Injectable } from '@varld/warp';
+import { Service } from '@varld/warp';
 import { OpenAI } from 'openai';
 import { AIOrchestrator } from './AIOrchestrator';
 
@@ -40,7 +40,7 @@ export interface PredictiveMaintenanceAlert {
   criticalityLevel: 'low' | 'medium' | 'high' | 'critical';
 }
 
-@Injectable()
+@Service()
 export class ConstructionAIService {
   private openai: OpenAI;
   private marketDataCache: Map<string, ConstructionMarketData> = new Map();
@@ -450,7 +450,7 @@ export class ConstructionAIService {
   }
 
   private getEstimatedLeadTime(category: string): number {
-    const leadTimes = {
+    const leadTimes: Record<string, number> = {
       lumber: 3,
       concrete: 1,
       steel: 7,

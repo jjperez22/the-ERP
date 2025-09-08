@@ -159,46 +159,50 @@ const users: User[] = [
  *                   type: string
  *                   example: AUTH_INVALID_CREDENTIALS
  */
-router.post('/login', async (req: Request, res: Response) => {
+router.post('/login', async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
 
     // Basic validation
     if (!email || !password) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         error: 'Email and password are required',
         code: 'AUTH_MISSING_CREDENTIALS'
       });
+      return;
     }
 
     // Find user
     const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
     if (!user) {
-      return res.status(401).json({
+      res.status(401).json({
         success: false,
         error: 'Invalid email or password',
         code: 'AUTH_INVALID_CREDENTIALS'
       });
+      return;
     }
 
     // Check if user is active
     if (!user.isActive) {
-      return res.status(401).json({
+      res.status(401).json({
         success: false,
         error: 'Account is deactivated',
         code: 'AUTH_ACCOUNT_DEACTIVATED'
       });
+      return;
     }
 
     // Verify password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(401).json({
+      res.status(401).json({
         success: false,
         error: 'Invalid email or password',
         code: 'AUTH_INVALID_CREDENTIALS'
       });
+      return;
     }
 
     // Update last login
@@ -274,44 +278,48 @@ router.post('/login', async (req: Request, res: Response) => {
  *       401:
  *         description: Authentication required (admin only)
  */
-router.post('/register', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
+router.post('/register', authenticateToken, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
     // Only admins can register new users
     if (req.user?.role !== 'admin') {
-      return res.status(403).json({
+      res.status(403).json({
         success: false,
         error: 'Only administrators can register new users',
         code: 'AUTH_ADMIN_REQUIRED'
       });
+      return;
     }
 
     const { email, password, name, role = 'user' } = req.body;
 
     // Basic validation
     if (!email || !password || !name) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         error: 'Email, password, and name are required',
         code: 'VALIDATION_ERROR'
       });
+      return;
     }
 
     if (password.length < 6) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         error: 'Password must be at least 6 characters long',
         code: 'VALIDATION_PASSWORD_TOO_SHORT'
       });
+      return;
     }
 
     // Check if user already exists
     const existingUser = users.find(u => u.email.toLowerCase() === email.toLowerCase());
     if (existingUser) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         error: 'User with this email already exists',
         code: 'AUTH_EMAIL_EXISTS'
       });
+      return;
     }
 
     // Hash password
@@ -376,16 +384,17 @@ router.post('/register', authenticateToken, async (req: AuthenticatedRequest, re
  *       401:
  *         description: Authentication required
  */
-router.get('/profile', authenticateToken, (req: AuthenticatedRequest, res: Response) => {
+router.get('/profile', authenticateToken, (req: AuthenticatedRequest, res: Response): void => {
   try {
     const user = users.find(u => u.id === req.user?.id);
     
     if (!user) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         error: 'User not found',
         code: 'USER_NOT_FOUND'
       });
+      return;
     }
 
     res.json({
@@ -439,16 +448,17 @@ router.get('/profile', authenticateToken, (req: AuthenticatedRequest, res: Respo
  *       401:
  *         description: Authentication required
  */
-router.post('/refresh', authenticateToken, (req: AuthenticatedRequest, res: Response) => {
+router.post('/refresh', authenticateToken, (req: AuthenticatedRequest, res: Response): void => {
   try {
     const user = users.find(u => u.id === req.user?.id);
     
     if (!user || !user.isActive) {
-      return res.status(401).json({
+      res.status(401).json({
         success: false,
         error: 'User not found or inactive',
         code: 'USER_INACTIVE'
       });
+      return;
     }
 
     // Generate new token

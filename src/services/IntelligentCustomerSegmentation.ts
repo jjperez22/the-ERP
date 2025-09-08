@@ -1,5 +1,5 @@
 // src/services/IntelligentCustomerSegmentation.ts
-import { Injectable } from '@varld/warp';
+import { Service } from '@varld/warp';
 import { EventEmitter } from 'events';
 import { OpenAI } from 'openai';
 
@@ -165,7 +165,7 @@ export interface PricingRecommendation {
   expectedResult: string;
 }
 
-@Injectable()
+@Service()
 export class IntelligentCustomerSegmentation extends EventEmitter {
   private openai: OpenAI;
   private segments: Map<string, CustomerSegment> = new Map();
@@ -543,7 +543,7 @@ export class IntelligentCustomerSegmentation extends EventEmitter {
       return strategies;
     } catch (error) {
       console.error('Strategy generation error:', error);
-      throw new Error(`Failed to generate segment strategies: ${error.message}`);
+      throw new Error(`Failed to generate segment strategies: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
@@ -614,7 +614,7 @@ export class IntelligentCustomerSegmentation extends EventEmitter {
       return pricingStrategy;
     } catch (error) {
       console.error('Pricing optimization error:', error);
-      throw new Error(`Failed to optimize pricing: ${error.message}`);
+      throw new Error(`Failed to optimize pricing: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
@@ -858,7 +858,7 @@ export class IntelligentCustomerSegmentation extends EventEmitter {
     }, 24 * 60 * 60 * 1000); // Daily
   }
 
-  private async processNewCustomers(): void {
+  private async processNewCustomers(): Promise<void> {
     // Process any new customers that need analysis
     // This would integrate with customer database in production
     console.log('🔄 Processing new customers for segmentation...');

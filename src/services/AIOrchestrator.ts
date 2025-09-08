@@ -1,7 +1,7 @@
 // src/services/AIOrchestrator.ts
-import { Injectable } from '@varld/warp';
+import { Service } from '@varld/warp';
 import { OpenAI } from 'openai';
-import { Product, Customer, SalesOrder, InventoryItem, AIInsight, DemandForecast } from '../models/DataModels';
+import { Product, Customer, Order, AIInsight } from '../types/index';
 import { EventEmitter } from 'events';
 
 export interface AIContext {
@@ -11,7 +11,7 @@ export interface AIContext {
   preferences: Record<string, any>;
 }
 
-@Injectable()
+@Service()
 export class AIOrchestrator extends EventEmitter {
   private openai: OpenAI;
   private aiModels: Map<string, any> = new Map();
@@ -30,7 +30,7 @@ export class AIOrchestrator extends EventEmitter {
     // Register specialized AI models for different functions
     this.aiModels.set('demand_forecasting', new DemandForecastingModel());
     this.aiModels.set('inventory_optimization', new InventoryOptimizationModel());
-    this.aiModels.set('price_intelligence', new PriceIntelligenceModel());
+    this.aiModels.set('price_intelligence', new ProjectIntelligenceModel());
     this.aiModels.set('customer_intelligence', new CustomerIntelligenceModel());
     this.aiModels.set('supply_chain_optimization', new SupplyChainOptimizationModel());
     this.aiModels.set('project_intelligence', new ProjectIntelligenceModel());
@@ -84,18 +84,15 @@ export class AIOrchestrator extends EventEmitter {
     const model = this.aiModels.get('demand_forecasting');
     const forecasts = await model.generateForecasts(context);
     
-    return forecasts.map(forecast => ({
+    return forecasts.map((forecast: any) => ({
       id: `demand-${Date.now()}-${Math.random()}`,
-      type: 'demand_forecast' as const,
+      type: 'demand' as const,
       title: `Demand Forecast: ${forecast.productName}`,
       description: `Predicted ${forecast.trend > 0 ? 'increase' : 'decrease'} of ${Math.abs(forecast.trend)}% in next ${forecast.horizon} days`,
       severity: this.calculateSeverity(forecast.confidence, forecast.impact),
       confidence: forecast.confidence,
-      actionable: true,
-      recommendations: forecast.recommendations,
-      data: forecast,
-      createdAt: new Date(),
-      expiresAt: new Date(Date.now() + forecast.horizon * 24 * 60 * 60 * 1000)
+      action: forecast.recommendations?.[0] || 'Review demand patterns',
+      timestamp: new Date().toISOString()
     }));
   }
 
@@ -103,17 +100,15 @@ export class AIOrchestrator extends EventEmitter {
     const model = this.aiModels.get('inventory_optimization');
     const optimizations = await model.optimize(context);
     
-    return optimizations.map(opt => ({
+    return optimizations.map((opt: any) => ({
       id: `inventory-${Date.now()}-${Math.random()}`,
-      type: 'inventory_optimization' as const,
+      type: 'inventory' as const,
       title: opt.title,
       description: opt.description,
       severity: opt.severity,
       confidence: opt.confidence,
-      actionable: true,
-      recommendations: opt.actions,
-      data: opt.data,
-      createdAt: new Date()
+      action: opt.actions?.[0] || 'Review inventory levels',
+      timestamp: new Date().toISOString()
     }));
   }
 
@@ -121,17 +116,15 @@ export class AIOrchestrator extends EventEmitter {
     const model = this.aiModels.get('customer_intelligence');
     const insights = await model.analyzeCustomers(context);
     
-    return insights.map(insight => ({
+    return insights.map((insight: any) => ({
       id: `customer-${Date.now()}-${Math.random()}`,
-      type: 'customer_churn' as const,
+      type: 'customer' as const,
       title: insight.title,
       description: insight.description,
       severity: insight.churnRisk > 0.7 ? 'critical' : insight.churnRisk > 0.4 ? 'warning' : 'info',
       confidence: insight.confidence,
-      actionable: true,
-      recommendations: insight.retentionStrategies,
-      data: insight.data,
-      createdAt: new Date()
+      action: insight.retentionStrategies?.[0] || 'Review customer relationship',
+      timestamp: new Date().toISOString()
     }));
   }
 
@@ -139,17 +132,15 @@ export class AIOrchestrator extends EventEmitter {
     const model = this.aiModels.get('supply_chain_optimization');
     const optimizations = await model.optimizeSupplyChain(context);
     
-    return optimizations.map(opt => ({
+    return optimizations.map((opt: any) => ({
       id: `supply-${Date.now()}-${Math.random()}`,
-      type: 'supplier_risk' as const,
+      type: 'operational' as const,
       title: opt.title,
       description: opt.description,
       severity: opt.riskLevel,
       confidence: opt.confidence,
-      actionable: true,
-      recommendations: opt.mitigationStrategies,
-      data: opt.data,
-      createdAt: new Date()
+      action: opt.mitigationStrategies?.[0] || 'Review supplier performance',
+      timestamp: new Date().toISOString()
     }));
   }
 
@@ -157,17 +148,15 @@ export class AIOrchestrator extends EventEmitter {
     const model = this.aiModels.get('project_intelligence');
     const insights = await model.analyzeProjects(context);
     
-    return insights.map(insight => ({
+    return insights.map((insight: any) => ({
       id: `project-${Date.now()}-${Math.random()}`,
-      type: 'seasonal_trend' as const,
+      type: 'operational' as const,
       title: insight.title,
       description: insight.description,
       severity: insight.severity,
       confidence: insight.confidence,
-      actionable: true,
-      recommendations: insight.recommendations,
-      data: insight.data,
-      createdAt: new Date()
+      action: insight.recommendations?.[0] || 'Monitor seasonal patterns',
+      timestamp: new Date().toISOString()
     }));
   }
 
@@ -200,15 +189,13 @@ export class AIOrchestrator extends EventEmitter {
       
       return [{
         id: `market-${Date.now()}`,
-        type: 'price_opportunity' as const,
+        type: 'pricing' as const,
         title: 'Market Intelligence Update',
         description: analysis.summary || 'Current market conditions analysis',
         severity: 'info' as const,
         confidence: 0.8,
-        actionable: true,
-        recommendations: analysis.recommendations || [],
-        data: analysis,
-        createdAt: new Date()
+        action: analysis.recommendations?.[0] || 'Review market conditions',
+        timestamp: new Date().toISOString()
       }];
     } catch (error) {
       console.error('Market intelligence error:', error);
@@ -232,14 +219,14 @@ export class AIOrchestrator extends EventEmitter {
     let score = 0;
     
     // Severity weight
-    const severityWeight = { critical: 100, warning: 70, info: 40 };
+    const severityWeight: Record<string, number> = { critical: 100, warning: 70, info: 40 };
     score += severityWeight[insight.severity];
     
     // Confidence weight
-    score += insight.confidence * 50;
+    score += (insight.confidence || 0) * 50;
     
-    // Actionability bonus
-    if (insight.actionable) score += 30;
+    // Actionability bonus (check for actionable property)
+    if ((insight as any).actionable) score += 30;
     
     // Type priority based on company size
     const typePriority = this.getTypePriorityForCompany(insight.type, context.companySize);
@@ -249,7 +236,7 @@ export class AIOrchestrator extends EventEmitter {
   }
 
   private getTypePriorityForCompany(type: string, companySize: string): number {
-    const priorities = {
+    const priorities: Record<string, Record<string, number>> = {
       small: {
         'inventory_optimization': 50,
         'cash_flow_prediction': 45,
@@ -300,7 +287,7 @@ export class AIOrchestrator extends EventEmitter {
     // Check for critical conditions that need immediate attention
     const criticalInsights = Array.from(this.activeInsights.values())
       .filter(insight => insight.severity === 'critical')
-      .filter(insight => !insight.expiresAt || insight.expiresAt > new Date());
+      .filter(insight => !(insight as any).expiresAt || (insight as any).expiresAt > new Date());
     
     if (criticalInsights.length > 0) {
       this.emit('critical_alerts', criticalInsights);

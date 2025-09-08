@@ -1,5 +1,5 @@
 // src/services/SmartContractManager.ts
-import { Injectable } from '@varld/warp';
+import { Service } from '@varld/warp';
 import { EventEmitter } from 'events';
 import { OpenAI } from 'openai';
 
@@ -143,7 +143,7 @@ export interface NegotiationOutcome {
   satisfactionScore: number;
 }
 
-@Injectable()
+@Service()
 export class SmartContractManager extends EventEmitter {
   private openai: OpenAI;
   private contractAnalyses: Map<string, ContractAnalysis> = new Map();
@@ -256,7 +256,7 @@ export class SmartContractManager extends EventEmitter {
       return analysis;
     } catch (error) {
       console.error('Contract analysis error:', error);
-      throw new Error(`Failed to analyze contract: ${error.message}`);
+      throw new Error(`Failed to analyze contract: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
@@ -317,7 +317,7 @@ export class SmartContractManager extends EventEmitter {
       return strategy;
     } catch (error) {
       console.error('Negotiation strategy generation error:', error);
-      throw new Error(`Failed to generate negotiation strategy: ${error.message}`);
+      throw new Error(`Failed to generate negotiation strategy: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 

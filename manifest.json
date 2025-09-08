@@ -1,0 +1,168 @@
+{
+  "name": "Construction ERP - Project Management System",
+  "short_name": "Construction ERP",
+  "description": "Comprehensive construction project management and ERP system for managing projects, inventory, finances, and human resources.",
+  "version": "1.0.0",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#fcfcf9",
+  "theme_color": "#1FB8CD",
+  "orientation": "any",
+  "scope": "/",
+  "lang": "en-US",
+  "dir": "ltr",
+  "categories": [
+    "business",
+    "productivity",
+    "finance",
+    "utilities"
+  ],
+  "screenshots": [
+    {
+      "src": "assets/screenshots/desktop-dashboard.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "platform": "wide",
+      "label": "Construction ERP Dashboard"
+    },
+    {
+      "src": "assets/screenshots/mobile-dashboard.png", 
+      "sizes": "390x844",
+      "type": "image/png",
+      "platform": "narrow",
+      "label": "Mobile Dashboard View"
+    }
+  ],
+  "icons": [
+    {
+      "src": "assets/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-192x192-maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "assets/icons/icon-512x512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "View project dashboard and KPIs",
+      "url": "/index.html?shortcut=dashboard",
+      "icons": [
+        {
+          "src": "assets/icons/shortcut-dashboard.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "New Project",
+      "short_name": "New Project",
+      "description": "Create a new construction project",
+      "url": "/index.html?shortcut=new-project",
+      "icons": [
+        {
+          "src": "assets/icons/shortcut-project.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Inventory",
+      "short_name": "Inventory",
+      "description": "Manage construction materials and equipment",
+      "url": "/index.html?shortcut=inventory",
+      "icons": [
+        {
+          "src": "assets/icons/shortcut-inventory.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Finance",
+      "short_name": "Finance",
+      "description": "View financial reports and cash flow",
+      "url": "/index.html?shortcut=finance",
+      "icons": [
+        {
+          "src": "assets/icons/shortcut-finance.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "related_applications": [
+    {
+      "platform": "webapp",
+      "url": "https://construction-erp-demo.com"
+    }
+  ],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "handle_links": "preferred",
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
+  "protocol_handlers": [
+    {
+      "protocol": "web+constructionerp",
+      "url": "/index.html?action=%s"
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 // src/services/AutomationService.ts
-import { Injectable } from '@varld/warp';
+import { Service } from '@varld/warp';
 import { AIOrchestrator } from './AIOrchestrator';
 import { RealTimeService } from './RealTimeService';
 import { EventEmitter } from 'events';
@@ -48,7 +48,7 @@ export interface SmartProcurementRule {
   deliveryTimeLimit: number;
 }
 
-@Injectable()
+@Service()
 export class AutomationService extends EventEmitter {
   private workflows: Map<string, WorkflowRule> = new Map();
   private procurementRules: Map<string, SmartProcurementRule> = new Map();
@@ -253,14 +253,14 @@ export class AutomationService extends EventEmitter {
 
     // Listen for AI insights that could trigger workflows
     this.aiOrchestrator.on('insights_updated', (insights) => {
-      insights.forEach(insight => {
+      insights.forEach((insight: any) => {
         this.processAIInsightTriggers(insight);
       });
     });
 
     // Listen for critical alerts
     this.aiOrchestrator.on('critical_alerts', (alerts) => {
-      alerts.forEach(alert => {
+      alerts.forEach((alert: any) => {
         this.processCriticalAlert(alert);
       });
     });
@@ -330,7 +330,8 @@ export class AutomationService extends EventEmitter {
 
     } catch (error) {
       console.error(`Workflow execution error for ${workflowId}:`, error);
-      this.emit('workflow_error', { workflowId, context, error: error.message });
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.emit('workflow_error', { workflowId, context, error: errorMessage });
       return false;
     }
   }
@@ -433,7 +434,7 @@ export class AutomationService extends EventEmitter {
         });
         
         if (aiRecommendation.length > 0) {
-          orderQuantity = aiRecommendation[0].data?.optimalOrderQuantity || orderQuantity;
+          orderQuantity = (aiRecommendation[0] as any).data?.optimalOrderQuantity || orderQuantity;
         }
       } catch (error) {
         console.error('AI recommendation failed, using default quantity');
@@ -574,7 +575,8 @@ export class AutomationService extends EventEmitter {
       }
     } catch (error) {
       console.error('AI Analysis failed:', error);
-      return { error: error.message };
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      return { error: errorMessage };
     }
   }
 

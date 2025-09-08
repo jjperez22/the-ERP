@@ -1,0 +1,29 @@
+{
+  "name": "construction-erp-api",
+  "version": "1.0.0",
+  "description": "Mock API server for Construction ERP push notifications and data sync",
+  "main": "api-server.js",
+  "scripts": {
+    "start": "node api-server.js",
+    "dev": "nodemon api-server.js",
+    "test-notification": "node test-notification.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "web-push": "^3.6.6"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "keywords": [
+    "construction",
+    "erp",
+    "push-notifications",
+    "pwa",
+    "sync",
+    "api"
+  ],
+  "author": "Construction ERP Team",
+  "license": "MIT"
+}

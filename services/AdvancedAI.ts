@@ -151,7 +151,8 @@ export class AdvancedConstructionAI {
 
     } catch (error) {
       console.error('Error generating seasonal demand forecast:', error);
-      throw new Error(`Failed to generate seasonal forecast: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`Failed to generate seasonal forecast: ${errorMessage}`);
     }
   }
 
@@ -213,7 +214,8 @@ export class AdvancedConstructionAI {
       
     } catch (error) {
       console.error('Error analyzing dynamic pricing:', error);
-      throw new Error(`Failed to analyze dynamic pricing: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`Failed to analyze dynamic pricing: ${errorMessage}`);
     }
   }
 
@@ -253,7 +255,8 @@ export class AdvancedConstructionAI {
       
     } catch (error) {
       console.error('Error assessing supplier risk:', error);
-      throw new Error(`Failed to assess supplier risk: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`Failed to assess supplier risk: ${errorMessage}`);
     }
   }
 

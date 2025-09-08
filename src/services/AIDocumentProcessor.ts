@@ -1,5 +1,5 @@
 // src/services/AIDocumentProcessor.ts
-import { Injectable } from '@varld/warp';
+import { Service } from '@varld/warp';
 import { EventEmitter } from 'events';
 import { OpenAI } from 'openai';
 import * as fs from 'fs';
@@ -109,7 +109,7 @@ export interface SmartRouting {
   estimatedProcessingTime: number;
 }
 
-@Injectable()
+@Service()
 export class AIDocumentProcessor extends EventEmitter {
   private openai: OpenAI;
   private documentTemplates: Map<string, DocumentTemplate> = new Map();
@@ -242,7 +242,8 @@ export class AIDocumentProcessor extends EventEmitter {
 
     } catch (error) {
       console.error(`Error processing document ${documentId}:`, error);
-      this.emit('document_processing_error', { documentId, error: error.message });
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.emit('document_processing_error', { documentId, error: errorMessage });
       throw error;
     }
   }
@@ -260,7 +261,8 @@ export class AIDocumentProcessor extends EventEmitter {
         return this.simulateOCRExtraction(documentPath);
       }
     } catch (error) {
-      throw new Error(`Failed to extract text from document: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`Failed to extract text from document: ${errorMessage}`);
     }
   }
 
@@ -381,21 +383,25 @@ export class AIDocumentProcessor extends EventEmitter {
       const match = ocrText.match(regex);
       
       if (match && match[1]) {
-        let value = match[1].trim();
+        let rawValue = match[1].trim();
+        let value: any;
         
         // Convert based on data type
         switch (mapping.dataType) {
           case 'number':
-            value = parseFloat(value.replace(/,/g, '')) || 0;
+            value = parseFloat(rawValue.replace(/,/g, '')) || 0;
             break;
           case 'currency':
-            value = parseFloat(value.replace(/[$,]/g, '')) || 0;
+            value = parseFloat(rawValue.replace(/[$,]/g, '')) || 0;
             break;
           case 'date':
-            value = new Date(value);
+            value = new Date(rawValue);
             break;
           case 'boolean':
-            value = /^(true|yes|1)$/i.test(value);
+            value = /^(true|yes|1)$/i.test(rawValue);
+            break;
+          default:
+            value = rawValue;
             break;
         }
         
@@ -531,7 +537,7 @@ export class AIDocumentProcessor extends EventEmitter {
         field: rule.field,
         isValid: false,
         confidence: 0.5,
-        errorMessage: `Validation error: ${error.message}`,
+        errorMessage: `Validation error: ${error instanceof Error ? error.message : String(error)}`,
         requiresHumanReview: true
       };
     }

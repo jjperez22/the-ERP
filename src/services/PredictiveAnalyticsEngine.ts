@@ -1,7 +1,7 @@
 // src/services/PredictiveAnalyticsEngine.ts
-import { Injectable } from '@varld/warp';
+import { Service } from '@varld/warp';
 import { EventEmitter } from 'events';
-import * as tf from '@tensorflow/tfjs-node';
+import * as tf from '@tensorflow/tfjs';
 
 export interface PredictionResult {
   prediction: number;
@@ -31,7 +31,7 @@ export interface NeuralNetworkModel {
   version: string;
 }
 
-@Injectable()
+@Service()
 export class PredictiveAnalyticsEngine extends EventEmitter {
   private models: Map<string, NeuralNetworkModel> = new Map();
   private dataBuffer: Map<string, any[]> = new Map();

@@ -190,7 +190,7 @@ let projects: Project[] = [
  *       401:
  *         description: Authentication required
  */
-router.get('/', authenticateToken, (req: AuthenticatedRequest, res: Response) => {
+router.get('/', authenticateToken, (req: AuthenticatedRequest, res: Response): void => {
   try {
     const { status, managerId, page = '1', limit = '10' } = req.query;
     const userRole = req.user?.role;
@@ -269,7 +269,7 @@ router.get('/', authenticateToken, (req: AuthenticatedRequest, res: Response) =>
  *       401:
  *         description: Authentication required
  */
-router.get('/:id', authenticateToken, (req: AuthenticatedRequest, res: Response) => {
+router.get('/:id', authenticateToken, (req: AuthenticatedRequest, res: Response): void => {
   try {
     const { id } = req.params;
     const userRole = req.user?.role;
@@ -278,20 +278,22 @@ router.get('/:id', authenticateToken, (req: AuthenticatedRequest, res: Response)
     const project = projects.find(p => p.id === id);
     
     if (!project) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         error: 'Project not found',
         code: 'PROJECT_NOT_FOUND'
       });
+      return;
     }
     
     // Check permissions
     if (userRole === 'manager' && project.managerId !== userId) {
-      return res.status(403).json({
+      res.status(403).json({
         success: false,
         error: 'Access denied - you can only view your own projects',
         code: 'ACCESS_DENIED'
       });
+      return;
     }
     
     res.json({
@@ -333,7 +335,7 @@ router.get('/:id', authenticateToken, (req: AuthenticatedRequest, res: Response)
  *       401:
  *         description: Authentication required
  */
-router.post('/', authenticateToken, requireRole(['admin', 'manager']), (req: AuthenticatedRequest, res: Response) => {
+router.post('/', authenticateToken, requireRole(['admin', 'manager']), (req: AuthenticatedRequest, res: Response): void => {
   try {
     const {
       name,
@@ -350,30 +352,33 @@ router.post('/', authenticateToken, requireRole(['admin', 'manager']), (req: Aut
     
     // Basic validation
     if (!name || !status || !budget || !startDate || !managerId || !clientName || !location) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         error: 'Missing required fields: name, status, budget, startDate, managerId, clientName, location',
         code: 'VALIDATION_ERROR'
       });
+      return;
     }
     
     // Validate status
     const validStatuses = ['planning', 'in-progress', 'completed', 'on-hold', 'cancelled'];
     if (!validStatuses.includes(status)) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         error: `Invalid status. Must be one of: ${validStatuses.join(', ')}`,
         code: 'INVALID_STATUS'
       });
+      return;
     }
     
     // Validate budget
     if (isNaN(budget) || budget <= 0) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         error: 'Budget must be a positive number',
         code: 'INVALID_BUDGET'
       });
+      return;
     }
     
     const newProject: Project = {
@@ -440,7 +445,7 @@ router.post('/', authenticateToken, requireRole(['admin', 'manager']), (req: Aut
  *       401:
  *         description: Authentication required
  */
-router.put('/:id', authenticateToken, requireRole(['admin', 'manager']), (req: AuthenticatedRequest, res: Response) => {
+router.put('/:id', authenticateToken, requireRole(['admin', 'manager']), (req: AuthenticatedRequest, res: Response): void => {
   try {
     const { id } = req.params;
     const userRole = req.user?.role;
@@ -449,20 +454,22 @@ router.put('/:id', authenticateToken, requireRole(['admin', 'manager']), (req: A
     const projectIndex = projects.findIndex(p => p.id === id);
     
     if (projectIndex === -1) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         error: 'Project not found',
         code: 'PROJECT_NOT_FOUND'
       });
+      return;
     }
     
     // Check permissions
     if (userRole === 'manager' && projects[projectIndex].managerId !== userId) {
-      return res.status(403).json({
+      res.status(403).json({
         success: false,
         error: 'Access denied - you can only update your own projects',
         code: 'ACCESS_DENIED'
       });
+      return;
     }
     
     const {
@@ -482,11 +489,12 @@ router.put('/:id', authenticateToken, requireRole(['admin', 'manager']), (req: A
     if (status) {
       const validStatuses = ['planning', 'in-progress', 'completed', 'on-hold', 'cancelled'];
       if (!validStatuses.includes(status)) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           error: `Invalid status. Must be one of: ${validStatuses.join(', ')}`,
           code: 'INVALID_STATUS'
         });
+        return;
       }
     }
     
@@ -544,17 +552,18 @@ router.put('/:id', authenticateToken, requireRole(['admin', 'manager']), (req: A
  *       401:
  *         description: Authentication required
  */
-router.delete('/:id', authenticateToken, requireRole(['admin']), (req: AuthenticatedRequest, res: Response) => {
+router.delete('/:id', authenticateToken, requireRole(['admin']), (req: AuthenticatedRequest, res: Response): void => {
   try {
     const { id } = req.params;
     const projectIndex = projects.findIndex(p => p.id === id);
     
     if (projectIndex === -1) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         error: 'Project not found',
         code: 'PROJECT_NOT_FOUND'
       });
+      return;
     }
     
     const deletedProject = projects.splice(projectIndex, 1)[0];

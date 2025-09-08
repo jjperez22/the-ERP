@@ -9,25 +9,27 @@ export interface AuthenticatedRequest extends Request {
   };
 }
 
-export const authenticateToken = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+export const authenticateToken = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
 
   if (!token) {
-    return res.status(401).json({
+    res.status(401).json({
       success: false,
       error: 'Access token required',
       code: 'AUTH_TOKEN_MISSING'
     });
+    return;
   }
 
-  jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret', (err: any, user: any) => {
+  jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret', (err: any, user: any): void => {
     if (err) {
-      return res.status(403).json({
+      res.status(403).json({
         success: false,
         error: 'Invalid or expired token',
         code: 'AUTH_TOKEN_INVALID'
       });
+      return;
     }
 
     req.user = user;
@@ -36,23 +38,25 @@ export const authenticateToken = (req: AuthenticatedRequest, res: Response, next
 };
 
 export const requireRole = (roles: string[]) => {
-  return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  return (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
     if (!req.user) {
-      return res.status(401).json({
+      res.status(401).json({
         success: false,
         error: 'Authentication required',
         code: 'AUTH_REQUIRED'
       });
+      return;
     }
 
     if (!roles.includes(req.user.role)) {
-      return res.status(403).json({
+      res.status(403).json({
         success: false,
         error: 'Insufficient permissions',
         code: 'AUTH_INSUFFICIENT_PERMISSIONS',
         required_roles: roles,
         user_role: req.user.role
       });
+      return;
     }
 
     next();
@@ -60,7 +64,7 @@ export const requireRole = (roles: string[]) => {
 };
 
 // Optional authentication - doesn't require token but adds user info if present
-export const optionalAuth = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+export const optionalAuth = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 

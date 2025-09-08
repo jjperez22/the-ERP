@@ -1,5 +1,5 @@
 // src/services/RealTimeService.ts
-import { Injectable } from '@varld/warp';
+import { Service } from '@varld/warp';
 import { Server as SocketIOServer, Socket } from 'socket.io';
 import { Server as HttpServer } from 'http';
 import { AIOrchestrator } from './AIOrchestrator';
@@ -14,9 +14,9 @@ export interface RealTimeEvent {
   priority: 'low' | 'medium' | 'high' | 'critical';
 }
 
-@Injectable()
+@Service()
 export class RealTimeService extends EventEmitter {
-  private io: SocketIOServer;
+  private io!: SocketIOServer;
   private connectedClients: Map<string, Socket> = new Map();
   private userSubscriptions: Map<string, Set<string>> = new Map();
   private eventBuffer: Map<string, RealTimeEvent[]> = new Map();
@@ -89,7 +89,7 @@ export class RealTimeService extends EventEmitter {
         const result = await this.handleAIQuery(query, socket.data);
         socket.emit('ai_response', { success: true, data: result });
       } catch (error) {
-        socket.emit('ai_response', { success: false, error: error.message });
+        socket.emit('ai_response', { success: false, error: error instanceof Error ? error.message : 'Unknown error' });
       }
     });
 
@@ -112,7 +112,7 @@ export class RealTimeService extends EventEmitter {
           priority: 'medium'
         });
       } catch (error) {
-        socket.emit('action_response', { success: false, error: error.message });
+        socket.emit('action_response', { success: false, error: error instanceof Error ? error.message : 'Unknown error' });
       }
     });
 
@@ -270,8 +270,8 @@ export class RealTimeService extends EventEmitter {
   private async handleAIQuery(query: { type: string, context: any }, userData: any) {
     const aiContext = {
       userRole: userData.role || 'user',
-      companySize: 'midsize', // This would come from company settings
-      industry: 'construction',
+      companySize: 'midsize' as const, // This would come from company settings
+      industry: 'construction' as const,
       preferences: query.context || {}
     };
 

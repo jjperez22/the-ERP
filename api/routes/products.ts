@@ -173,7 +173,7 @@ let products: Product[] = [
  *             schema:
  *               $ref: '#/components/schemas/ApiResponse'
  */
-router.get('/', (req: Request, res: Response) => {
+router.get('/', (req: Request, res: Response): void => {
   try {
     const { category, active, page = '1', limit = '10' } = req.query;
     
@@ -241,17 +241,18 @@ router.get('/', (req: Request, res: Response) => {
  *       404:
  *         description: Product not found
  */
-router.get('/:id', (req: Request, res: Response) => {
+router.get('/:id', (req: Request, res: Response): void => {
   try {
     const { id } = req.params;
     const product = products.find(p => p.id === id);
     
     if (!product) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         error: 'Product not found',
         code: 'PRODUCT_NOT_FOUND'
       });
+      return;
     }
     
     res.json({
@@ -293,26 +294,28 @@ router.get('/:id', (req: Request, res: Response) => {
  *       401:
  *         description: Authentication required
  */
-router.post('/', authenticateToken, requireRole(['admin', 'manager']), (req: AuthenticatedRequest, res: Response) => {
+router.post('/', authenticateToken, requireRole(['admin', 'manager']), (req: AuthenticatedRequest, res: Response): void => {
   try {
     const { name, description, price, category, sku, stockQuantity, isActive = true } = req.body;
     
     // Basic validation
     if (!name || !price || !category || !sku || stockQuantity === undefined) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         error: 'Missing required fields: name, price, category, sku, stockQuantity',
         code: 'VALIDATION_ERROR'
       });
+      return;
     }
     
     // Check if SKU already exists
     if (products.some(p => p.sku === sku)) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         error: 'Product with this SKU already exists',
         code: 'SKU_DUPLICATE'
       });
+      return;
     }
     
     const newProduct: Product = {
@@ -376,7 +379,7 @@ router.post('/', authenticateToken, requireRole(['admin', 'manager']), (req: Aut
  *       401:
  *         description: Authentication required
  */
-router.put('/:id', authenticateToken, requireRole(['admin', 'manager']), (req: AuthenticatedRequest, res: Response) => {
+router.put('/:id', authenticateToken, requireRole(['admin', 'manager']), (req: AuthenticatedRequest, res: Response): void => {
   try {
     const { id } = req.params;
     const { name, description, price, category, sku, stockQuantity, isActive } = req.body;
@@ -384,20 +387,22 @@ router.put('/:id', authenticateToken, requireRole(['admin', 'manager']), (req: A
     const productIndex = products.findIndex(p => p.id === id);
     
     if (productIndex === -1) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         error: 'Product not found',
         code: 'PRODUCT_NOT_FOUND'
       });
+      return;
     }
     
     // Check if SKU is being changed and already exists
     if (sku && sku !== products[productIndex].sku && products.some(p => p.sku === sku)) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         error: 'Product with this SKU already exists',
         code: 'SKU_DUPLICATE'
       });
+      return;
     }
     
     // Update product
@@ -451,17 +456,18 @@ router.put('/:id', authenticateToken, requireRole(['admin', 'manager']), (req: A
  *       401:
  *         description: Authentication required
  */
-router.delete('/:id', authenticateToken, requireRole(['admin']), (req: AuthenticatedRequest, res: Response) => {
+router.delete('/:id', authenticateToken, requireRole(['admin']), (req: AuthenticatedRequest, res: Response): void => {
   try {
     const { id } = req.params;
     const productIndex = products.findIndex(p => p.id === id);
     
     if (productIndex === -1) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         error: 'Product not found',
         code: 'PRODUCT_NOT_FOUND'
       });
+      return;
     }
     
     const deletedProduct = products.splice(productIndex, 1)[0];

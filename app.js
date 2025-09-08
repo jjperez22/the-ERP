@@ -60,6 +60,9 @@ function loginUser(userData) {
     isLoggedIn = true;
     currentUser = userData;
     
+    // Initialize role management system
+    initializeRoleBasedSystem(userData);
+    
     // Update user menu with logged in user's name
     const userMenu = document.querySelector('.user-menu span');
     if (userMenu) {
@@ -187,7 +190,42 @@ const appData = {
     {"id": "ACT001", "type": "order", "icon": "📋", "text": "New order from ABC Construction Co", "time": "2 hours ago", "timestamp": new Date(Date.now() - 2 * 60 * 60 * 1000)},
     {"id": "ACT002", "type": "alert", "icon": "⚠️", "text": "Low stock alert: Portland Cement", "time": "4 hours ago", "timestamp": new Date(Date.now() - 4 * 60 * 60 * 1000)},
     {"id": "ACT003", "type": "delivery", "icon": "✅", "text": "Order ORD003 delivered to Home Depot", "time": "6 hours ago", "timestamp": new Date(Date.now() - 6 * 60 * 60 * 1000)}
-  ]
+  ],
+  "supplyChain": {
+    "vendors": [
+      {"id": "V001", "name": "BuildPro Materials Inc.", "category": "construction", "status": "Active", "rating": 4.8, "paymentTerms": "Net 30", "leadTime": "3-5 days", "onTimeDelivery": 96.2, "qualityScore": 98.5, "ytdSpend": 234567, "contactPerson": "John Smith", "phone": "(555) 123-4567", "email": "john@buildpro.com", "address": "1234 Industrial Blvd, Phoenix, AZ"},
+      {"id": "V002", "name": "ElectriMax Supply Co.", "category": "electrical", "status": "Active", "rating": 4.6, "paymentTerms": "Net 15", "leadTime": "2-4 days", "onTimeDelivery": 94.8, "qualityScore": 97.2, "ytdSpend": 156890, "contactPerson": "Sarah Johnson", "phone": "(555) 234-5678", "email": "sarah@electrimax.com", "address": "567 Electric Ave, Tempe, AZ"},
+      {"id": "V003", "name": "PlumbCorp Solutions", "category": "plumbing", "status": "Active", "rating": 4.7, "paymentTerms": "Net 30", "leadTime": "4-6 days", "onTimeDelivery": 92.1, "qualityScore": 96.8, "ytdSpend": 89234, "contactPerson": "Mike Wilson", "phone": "(555) 345-6789", "email": "mike@plumbcorp.com", "address": "890 Pipe St, Scottsdale, AZ"},
+      {"id": "V004", "name": "ToolMaster Equipment", "category": "tools", "status": "Active", "rating": 4.5, "paymentTerms": "Net 45", "leadTime": "5-7 days", "onTimeDelivery": 89.3, "qualityScore": 94.6, "ytdSpend": 67123, "contactPerson": "Lisa Brown", "phone": "(555) 456-7890", "email": "lisa@toolmaster.com", "address": "321 Tool Way, Mesa, AZ"},
+      {"id": "V005", "name": "ConcretePro Mix", "category": "construction", "status": "Active", "rating": 4.9, "paymentTerms": "Net 30", "leadTime": "1-3 days", "onTimeDelivery": 98.7, "qualityScore": 99.1, "ytdSpend": 298456, "contactPerson": "Robert Davis", "phone": "(555) 567-8901", "email": "robert@concretepro.com", "address": "654 Mix Blvd, Chandler, AZ"}
+    ],
+    "purchaseOrders": [
+      {"id": "PO-2025-001", "vendorId": "V001", "vendor": "BuildPro Materials Inc.", "date": "2025-08-20", "totalAmount": 15234.56, "status": "Pending Approval", "expectedDelivery": "2025-08-28", "items": [{"productId": "P001", "quantity": 500, "unitPrice": 4.99}, {"productId": "P003", "quantity": 20, "unitPrice": 129.99}], "approver": "John Admin", "notes": "Urgent delivery required for Project Phoenix"},
+      {"id": "PO-2025-002", "vendorId": "V002", "vendor": "ElectriMax Supply Co.", "date": "2025-08-22", "totalAmount": 8976.43, "status": "Pending Approval", "expectedDelivery": "2025-08-26", "items": [{"productId": "P004", "quantity": 100, "unitPrice": 89.99}], "approver": "Sarah Manager", "notes": "Standard electrical supplies order"},
+      {"id": "PO-2025-003", "vendorId": "V003", "vendor": "PlumbCorp Solutions", "date": "2025-08-18", "totalAmount": 12450.75, "status": "Approved", "expectedDelivery": "2025-08-25", "items": [{"productId": "P005", "quantity": 200, "unitPrice": 24.99}], "approver": "John Admin", "notes": "Approved - rush order"},
+      {"id": "PO-2025-004", "vendorId": "V001", "vendor": "BuildPro Materials Inc.", "date": "2025-08-15", "totalAmount": 23678.90, "status": "Sent", "expectedDelivery": "2025-08-24", "items": [{"productId": "P002", "quantity": 300, "unitPrice": 8.49}], "approver": "John Admin", "notes": "Large cement order for multiple projects"},
+      {"id": "PO-2025-005", "vendorId": "V005", "vendor": "ConcretePro Mix", "date": "2025-08-12", "totalAmount": 45123.67, "status": "Receiving", "expectedDelivery": "2025-08-23", "items": [{"productId": "P002", "quantity": 500, "unitPrice": 8.49}], "approver": "John Admin", "notes": "Major concrete delivery - partial received"}
+    ],
+    "shipments": [
+      {"id": "SH-2025-001", "orderId": "ORD001", "customer": "ABC Construction Co.", "carrier": "FedEx Freight", "trackingNumber": "1234567890", "status": "In Transit", "estimatedDelivery": "2025-08-28", "currentLocation": "Phoenix, AZ Hub", "progress": 75, "items": 12, "weight": "2,400 lbs", "value": 4567.89, "createdDate": "2025-08-24"},
+      {"id": "SH-2025-002", "orderId": "ORD002", "customer": "Johnson Plumbing Services", "carrier": "UPS Freight", "trackingNumber": "0987654321", "status": "Out for Delivery", "estimatedDelivery": "2025-08-25", "currentLocation": "Local Delivery Facility", "progress": 95, "items": 8, "weight": "850 lbs", "value": 1234.56, "createdDate": "2025-08-23"},
+      {"id": "SH-2025-003", "orderId": "ORD003", "customer": "Home Depot - Store #4521", "carrier": "DHL Supply Chain", "trackingNumber": "5678901234", "status": "Delivered", "estimatedDelivery": "2025-08-24", "currentLocation": "Delivered", "progress": 100, "items": 24, "weight": "5,200 lbs", "value": 8901.23, "createdDate": "2025-08-22", "deliveredDate": "2025-08-24"},
+      {"id": "SH-2025-004", "orderId": "ORD004", "customer": "Elite Residential Builders", "carrier": "XPO Logistics", "trackingNumber": "2345678901", "status": "Pending Pickup", "estimatedDelivery": "2025-08-26", "currentLocation": "Warehouse - Scheduled", "progress": 10, "items": 6, "weight": "1,100 lbs", "value": 2345.67, "createdDate": "2025-08-25"}
+    ],
+    "warehouses": [
+      {"id": "WH001", "name": "Main Warehouse", "location": "Phoenix, AZ", "status": "Operational", "capacity": 50000, "used": 42500, "skus": 1247, "value": 847000},
+      {"id": "WH002", "name": "Secondary Storage", "location": "Tempe, AZ", "status": "Operational", "capacity": 30000, "used": 18600, "skus": 893, "value": 356000}
+    ]
+  },
+  "hr": {
+    "employees": [
+      {"id": "EMP001", "employeeNumber": "E2024001", "firstName": "John", "lastName": "Smith", "fullName": "John Smith", "department": "Construction", "position": "Project Manager", "email": "john.smith@constructerp.com", "phone": "(555) 123-4567", "status": "Active", "hireDate": "2022-03-15", "salary": 85000, "payType": "Salary", "manager": "Sarah Johnson", "location": "Phoenix Office", "emergencyContact": "Jane Smith - (555) 987-6543", "skills": ["Project Management", "Construction", "Safety"], "performanceRating": 4.5},
+      {"id": "EMP002", "employeeNumber": "E2024002", "firstName": "Sarah", "lastName": "Johnson", "fullName": "Sarah Johnson", "department": "Management", "position": "Construction Manager", "email": "sarah.johnson@constructerp.com", "phone": "(555) 234-5678", "status": "Active", "hireDate": "2021-01-10", "salary": 95000, "payType": "Salary", "manager": "Robert Davis", "location": "Phoenix Office", "emergencyContact": "Mike Johnson - (555) 876-5432", "skills": ["Leadership", "Construction Management", "Budget Control"], "performanceRating": 4.8},
+      {"id": "EMP003", "employeeNumber": "E2024003", "firstName": "Mike", "lastName": "Wilson", "fullName": "Mike Wilson", "department": "Construction", "position": "Foreman", "email": "mike.wilson@constructerp.com", "phone": "(555) 345-6789", "status": "Active", "hireDate": "2023-06-01", "salary": 28.50, "payType": "Hourly", "manager": "John Smith", "location": "Field", "emergencyContact": "Lisa Wilson - (555) 765-4321", "skills": ["Heavy Equipment", "Safety Management", "Team Leadership"], "performanceRating": 4.2},
+      {"id": "EMP004", "employeeNumber": "E2024004", "firstName": "Lisa", "lastName": "Brown", "fullName": "Lisa Brown", "department": "Administration", "position": "HR Manager", "email": "lisa.brown@constructerp.com", "phone": "(555) 456-7890", "status": "Active", "hireDate": "2022-08-20", "salary": 72000, "payType": "Salary", "manager": "Robert Davis", "location": "Phoenix Office", "emergencyContact": "Tom Brown - (555) 654-3210", "skills": ["Human Resources", "Payroll", "Employee Relations"], "performanceRating": 4.6},
+      {"id": "EMP005", "employeeNumber": "E2024005", "firstName": "Robert", "lastName": "Davis", "fullName": "Robert Davis", "department": "Executive", "position": "General Manager", "email": "robert.davis@constructerp.com", "phone": "(555) 567-8901", "status": "Active", "hireDate": "2020-02-01", "salary": 125000, "payType": "Salary", "manager": null, "location": "Phoenix Office", "emergencyContact": "Mary Davis - (555) 543-2109", "skills": ["Executive Leadership", "Strategic Planning", "Business Development"], "performanceRating": 4.9}
+    ]
+  }
 };
 
 // Chart colors
@@ -196,6 +234,15 @@ const chartColors = ['#1FB8CD', '#FFC185', '#B4413C', '#ECEBD5', '#5D878F', '#DB
 // Global variables
 let currentModule = 'dashboard';
 let charts = {};
+
+// Role-based dashboard system variables
+let roleManager = null;
+let dashboardWidgets = null;
+
+// Security and encryption services
+let securityManager = null;
+let auditLogger = null;
+let encryptionService = null;
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
@@ -235,6 +282,10 @@ function initializeApp() {
     populateActivityFeed();
     initializeEventListeners();
     initializeSearch();
+    initializeSupplyChainTabs();
+    
+    // Initialize role-based dashboard widgets
+    initializeRoleBasedDashboard();
 }
 
 // Navigation functionality
@@ -306,10 +357,18 @@ function showModule(moduleName) {
     currentModule = moduleName;
     
     // Initialize module-specific content
-    if (moduleName === 'reports') {
+    if (moduleName === 'dashboard') {
+        // Refresh dashboard widgets when switching back to dashboard
+        setTimeout(() => refreshDashboardWidgets(), 100);
+    } else if (moduleName === 'reports') {
         setTimeout(() => initializeReportCharts(), 100);
     } else if (moduleName === 'insights') {
-        setTimeout(() => initializeDemandChart(), 100);
+        setTimeout(() => {
+            initializeAIInsights();
+            initializeDemandChart();
+        }, 100);
+    } else if (moduleName === 'supply-chain') {
+        setTimeout(() => initializeDefaultSupplyChainTab(), 100);
     }
 }
 
@@ -3068,4 +3127,1043 @@ function processCustomerCSVFile(file) {
     };
     
     reader.readAsText(file);
+}
+
+// Supply Chain Tab Navigation Functions
+function initializeSupplyChainTabs() {
+    const supplyChainTabBtns = document.querySelectorAll('.supply-chain-nav .tab-btn');
+    
+    // Add click event listeners to all Supply Chain tab buttons
+    supplyChainTabBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const tabName = btn.getAttribute('data-tab');
+            if (tabName) {
+                showSupplyChainTab(tabName);
+            }
+        });
+    });
+}
+
+// Tab content switching logic
+function showSupplyChainTab(tabName) {
+    // Hide all Supply Chain tab content sections
+    const allTabContent = document.querySelectorAll('.tab-content');
+    allTabContent.forEach(content => {
+        content.classList.remove('active');
+    });
+    
+    // Show the selected tab content
+    const targetTabContent = document.getElementById(`${tabName}Tab`);
+    if (targetTabContent) {
+        targetTabContent.classList.add('active');
+    }
+    
+    // Update tab button active states
+    updateSupplyChainTabStates(tabName);
+}
+
+// Update tab button visual states
+function updateSupplyChainTabStates(activeTabName) {
+    const supplyChainTabBtns = document.querySelectorAll('.supply-chain-nav .tab-btn');
+    
+    supplyChainTabBtns.forEach(btn => {
+        const tabName = btn.getAttribute('data-tab');
+        
+        if (tabName === activeTabName) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+}
+
+// Initialize default tab when Supply Chain module loads
+function initializeDefaultSupplyChainTab() {
+    // Set the first tab (Procurement) as active by default
+    // Note: HTML shows "procurement" as the first tab, not "planning"
+    const defaultTab = 'procurement';
+    showSupplyChainTab(defaultTab);
+    // Populate Supply Chain data when module loads
+    populateSupplyChainTabs();
+}
+
+// AI Insights initialization
+let aiInsightsService = null;
+let aiQueryInterface = null;
+let aiInsightsDisplay = null;
+let aiAnalyticsTabs = null;
+
+function initializeAIInsights() {
+    try {
+        // Check if AI insights classes are loaded
+        if (!window.AIInsightsDataService || !window.AIQueryInterface || 
+            !window.AIInsightsDisplay || !window.AIAnalyticsTabs) {
+            console.warn('AI Insights modules not loaded yet, retrying in 500ms...');
+            setTimeout(initializeAIInsights, 500);
+            return;
+        }
+        
+        // Initialize AI insights services
+        aiInsightsService = new window.AIInsightsDataService();
+        aiQueryInterface = new window.AIQueryInterface(aiInsightsService);
+        aiInsightsDisplay = new window.AIInsightsDisplay(aiInsightsService);
+        aiAnalyticsTabs = new window.AIAnalyticsTabs(aiInsightsService);
+        
+        // Make instances globally available for debugging and external access
+        window.aiInsightsService = aiInsightsService;
+        window.aiQueryInterface = aiQueryInterface;
+        window.aiInsightsDisplay = aiInsightsDisplay;
+        window.aiAnalyticsTabs = aiAnalyticsTabs;
+        
+        console.log('AI Insights initialized successfully');
+        
+        // Show initialization notification
+        if (window.showNotification) {
+            window.showNotification('AI Insights module loaded successfully', 'success');
+        }
+        
+    } catch (error) {
+        console.error('Failed to initialize AI Insights:', error);
+        
+        if (window.showNotification) {
+            window.showNotification('Failed to load AI Insights module', 'error');
+        }
+        
+        // Show fallback message in the insights module
+        showAIInsightsFallback();
+    }
+}
+
+function showAIInsightsFallback() {
+    // Show a fallback message if AI insights fails to initialize
+    const insightsModule = document.getElementById('insights');
+    if (!insightsModule) return;
+    
+    const fallbackHTML = `
+        <div style="text-align: center; padding: 40px; color: var(--color-text-secondary);">
+            <div style="font-size: 48px; margin-bottom: 16px;">🤖</div>
+            <h3>AI Insights Unavailable</h3>
+            <p>The AI insights module is temporarily unavailable. Please try refreshing the page.</p>
+            <button class="btn btn--primary" onclick="window.location.reload()">
+                Refresh Page
+            </button>
+        </div>
+    `;
+    
+    const existingContent = insightsModule.querySelector('.module-header').nextElementSibling;
+    if (existingContent) {
+        existingContent.innerHTML = fallbackHTML;
+    }
+}
+
+// HR Tab Navigation Functions
+function initializeHRTabs() {
+    const hrTabBtns = document.querySelectorAll('.hr-nav .tab-btn');
+    
+    // Add click event listeners to all HR tab buttons
+    hrTabBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const tabName = btn.getAttribute('data-tab');
+            if (tabName) {
+                showHRTab(tabName);
+            }
+        });
+    });
+}
+
+// HR Tab content switching logic
+function showHRTab(tabName) {
+    // Hide all HR tab content sections
+    const allHRTabContent = document.querySelectorAll('.hr-module .tab-content');
+    allHRTabContent.forEach(content => {
+        content.classList.remove('active');
+    });
+    
+    // Show the selected tab content
+    const targetTabContent = document.getElementById(`${tabName}Tab`);
+    if (targetTabContent) {
+        targetTabContent.classList.add('active');
+    }
+    
+    // Update tab button active states
+    updateHRTabStates(tabName);
+}
+
+// Update HR tab button visual states
+function updateHRTabStates(activeTabName) {
+    const hrTabBtns = document.querySelectorAll('.hr-nav .tab-btn');
+    
+    hrTabBtns.forEach(btn => {
+        const tabName = btn.getAttribute('data-tab');
+        
+        if (tabName === activeTabName) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+}
+
+// Initialize default tab when HR module loads
+function initializeDefaultHRTab() {
+    const defaultTab = 'employees';
+    showHRTab(defaultTab);
+    // Populate HR data when module loads
+    populateHRTabs();
+}
+
+// HR data population functions
+function populateHRTabs() {
+    populateEmployeeTable();
+    populateHRStats();
+    populateEmployeeCards();
+}
+
+function populateEmployeeTable() {
+    const tbody = document.getElementById('employeeTableBody');
+    if (!tbody) return;
+    
+    tbody.innerHTML = '';
+    
+    appData.hr.employees.forEach(employee => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${employee.employeeNumber}</td>
+            <td>${employee.fullName}</td>
+            <td>${employee.position}</td>
+            <td>${employee.department}</td>
+            <td><span class="status-badge ${employee.status.toLowerCase()}">${employee.status}</span></td>
+            <td>${employee.payType === 'Salary' ? '$' + employee.salary.toLocaleString() : '$' + employee.salary + '/hr'}</td>
+            <td>⭐ ${employee.performanceRating}</td>
+            <td>
+                <button class="action-btn view" onclick="viewEmployee('${employee.id}')">View</button>
+                <button class="action-btn edit" onclick="editEmployee('${employee.id}')">Edit</button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+function populateEmployeeCards() {
+    const container = document.getElementById('employeeCards');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    // Show first 6 employees as cards for quick overview
+    appData.hr.employees.slice(0, 6).forEach(employee => {
+        const card = document.createElement('div');
+        card.className = 'employee-card';
+        card.innerHTML = `
+            <div class="employee-avatar">
+                <div class="avatar-circle">${employee.firstName.charAt(0)}${employee.lastName.charAt(0)}</div>
+            </div>
+            <div class="employee-info">
+                <h4>${employee.fullName}</h4>
+                <p class="employee-title">${employee.position}</p>
+                <p class="employee-dept">${employee.department}</p>
+                <div class="employee-stats">
+                    <span class="stat-item">
+                        <span class="stat-label">Rating:</span>
+                        <span class="stat-value">⭐ ${employee.performanceRating}</span>
+                    </span>
+                    <span class="stat-item">
+                        <span class="stat-label">Location:</span>
+                        <span class="stat-value">${employee.location}</span>
+                    </span>
+                </div>
+                <div class="employee-actions">
+                    <button class="action-btn view" onclick="viewEmployee('${employee.id}')">View Profile</button>
+                </div>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+function populateHRStats() {
+    const totalEmployees = appData.hr.employees.length;
+    const activeEmployees = appData.hr.employees.filter(emp => emp.status === 'Active').length;
+    const avgPerformance = (appData.hr.employees.reduce((sum, emp) => sum + emp.performanceRating, 0) / totalEmployees).toFixed(1);
+    const departmentCounts = {};
+    
+    appData.hr.employees.forEach(emp => {
+        departmentCounts[emp.department] = (departmentCounts[emp.department] || 0) + 1;
+    });
+    
+    const topDepartment = Object.entries(departmentCounts).sort((a, b) => b[1] - a[1])[0];
+    
+    // Update HR dashboard stats if elements exist
+    const totalEmpElement = document.getElementById('totalEmployees');
+    const activeEmpElement = document.getElementById('activeEmployees');
+    const avgPerfElement = document.getElementById('avgPerformance');
+    const topDeptElement = document.getElementById('topDepartment');
+    
+    if (totalEmpElement) totalEmpElement.textContent = totalEmployees;
+    if (activeEmpElement) activeEmpElement.textContent = activeEmployees;
+    if (avgPerfElement) avgPerfElement.textContent = `${avgPerformance}/5.0`;
+    if (topDeptElement) topDeptElement.textContent = topDepartment ? `${topDepartment[0]} (${topDepartment[1]})` : 'N/A';
+}
+
+// Employee view and management functions
+function viewEmployee(employeeId) {
+    const employee = appData.hr.employees.find(emp => emp.id === employeeId);
+    if (!employee) return;
+    
+    const yearsOfService = new Date().getFullYear() - new Date(employee.hireDate).getFullYear();
+    
+    const content = `
+        <div class="form-group">
+            <div style="display: flex; align-items: center; margin-bottom: 20px;">
+                <div class="avatar-circle" style="width: 60px; height: 60px; font-size: 24px; margin-right: 15px;">
+                    ${employee.firstName.charAt(0)}${employee.lastName.charAt(0)}
+                </div>
+                <div>
+                    <h3 style="margin: 0;">${employee.fullName}</h3>
+                    <p style="margin: 5px 0; color: #666;">${employee.position} - ${employee.department}</p>
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <strong>Employee Information:</strong><br><br>
+                    <strong>Employee #:</strong> ${employee.employeeNumber}<br><br>
+                    <strong>Email:</strong> ${employee.email}<br><br>
+                    <strong>Phone:</strong> ${employee.phone}<br><br>
+                    <strong>Status:</strong> <span class="status-badge ${employee.status.toLowerCase()}">${employee.status}</span><br><br>
+                    <strong>Location:</strong> ${employee.location}<br><br>
+                    <strong>Emergency Contact:</strong> ${employee.emergencyContact}<br><br>
+                </div>
+                <div>
+                    <strong>Employment Details:</strong><br><br>
+                    <strong>Hire Date:</strong> ${formatDate(employee.hireDate)}<br><br>
+                    <strong>Years of Service:</strong> ${yearsOfService} years<br><br>
+                    <strong>Pay Type:</strong> ${employee.payType}<br><br>
+                    <strong>Compensation:</strong> ${employee.payType === 'Salary' ? '$' + employee.salary.toLocaleString() + '/year' : '$' + employee.salary + '/hour'}<br><br>
+                    <strong>Manager:</strong> ${employee.manager || 'None'}<br><br>
+                    <strong>Performance Rating:</strong> ⭐ ${employee.performanceRating}/5.0<br><br>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <strong>Skills:</strong><br>
+                <div style="margin-top: 10px;">
+                    ${employee.skills.map(skill => `<span style="display: inline-block; background: #e3f2fd; color: #1976d2; padding: 4px 8px; border-radius: 4px; margin: 2px; font-size: 12px;">${skill}</span>`).join('')}
+                </div>
+            </div>
+        </div>
+    `;
+    showModal(`Employee Profile - ${employee.fullName}`, content);
+}
+
+function editEmployee(employeeId) {
+    const employee = appData.hr.employees.find(emp => emp.id === employeeId);
+    if (!employee) {
+        showNotification('Employee not found');
+        return;
+    }
+    
+    const content = `
+        <form class="form-group" id="editEmployeeForm">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="form-group">
+                    <label class="form-label">First Name</label>
+                    <input type="text" class="form-control" id="editEmployeeFirstName" value="${employee.firstName}" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Last Name</label>
+                    <input type="text" class="form-control" id="editEmployeeLastName" value="${employee.lastName}" required>
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" id="editEmployeeEmail" value="${employee.email}" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phone</label>
+                    <input type="tel" class="form-control" id="editEmployeePhone" value="${employee.phone}" required>
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="form-group">
+                    <label class="form-label">Position</label>
+                    <input type="text" class="form-control" id="editEmployeePosition" value="${employee.position}" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Department</label>
+                    <select class="form-control" id="editEmployeeDepartment" required>
+                        <option value="Construction" ${employee.department === 'Construction' ? 'selected' : ''}>Construction</option>
+                        <option value="Management" ${employee.department === 'Management' ? 'selected' : ''}>Management</option>
+                        <option value="Administration" ${employee.department === 'Administration' ? 'selected' : ''}>Administration</option>
+                        <option value="Executive" ${employee.department === 'Executive' ? 'selected' : ''}>Executive</option>
+                        <option value="Finance" ${employee.department === 'Finance' ? 'selected' : ''}>Finance</option>
+                        <option value="Operations" ${employee.department === 'Operations' ? 'selected' : ''}>Operations</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
+                <div class="form-group">
+                    <label class="form-label">Pay Type</label>
+                    <select class="form-control" id="editEmployeePayType" required>
+                        <option value="Salary" ${employee.payType === 'Salary' ? 'selected' : ''}>Salary</option>
+                        <option value="Hourly" ${employee.payType === 'Hourly' ? 'selected' : ''}>Hourly</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Compensation</label>
+                    <input type="number" class="form-control" id="editEmployeeSalary" value="${employee.salary}" step="0.01" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Status</label>
+                    <select class="form-control" id="editEmployeeStatus" required>
+                        <option value="Active" ${employee.status === 'Active' ? 'selected' : ''}>Active</option>
+                        <option value="Inactive" ${employee.status === 'Inactive' ? 'selected' : ''}>Inactive</option>
+                        <option value="On Leave" ${employee.status === 'On Leave' ? 'selected' : ''}>On Leave</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="form-group">
+                    <label class="form-label">Location</label>
+                    <input type="text" class="form-control" id="editEmployeeLocation" value="${employee.location}" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Performance Rating</label>
+                    <input type="number" class="form-control" id="editEmployeeRating" value="${employee.performanceRating}" step="0.1" min="1" max="5" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Emergency Contact</label>
+                <input type="text" class="form-control" id="editEmployeeEmergency" value="${employee.emergencyContact}" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Skills (comma-separated)</label>
+                <input type="text" class="form-control" id="editEmployeeSkills" value="${employee.skills.join(', ')}" placeholder="Project Management, Construction, Safety">
+            </div>
+            
+            <div class="flex gap-8">
+                <button type="button" class="btn btn--primary" onclick="saveEmployeeEdit('${employeeId}')">Save Changes</button>
+                <button type="button" class="btn btn--outline" onclick="closeModal()">Cancel</button>
+            </div>
+        </form>
+    `;
+    showModal(`Edit Employee - ${employee.fullName}`, content);
+}
+
+function saveEmployeeEdit(employeeId) {
+    const employee = appData.hr.employees.find(emp => emp.id === employeeId);
+    if (!employee) {
+        showNotification('Employee not found');
+        return;
+    }
+    
+    // Get form values
+    const firstName = document.getElementById('editEmployeeFirstName')?.value?.trim();
+    const lastName = document.getElementById('editEmployeeLastName')?.value?.trim();
+    const email = document.getElementById('editEmployeeEmail')?.value?.trim();
+    const phone = document.getElementById('editEmployeePhone')?.value?.trim();
+    const position = document.getElementById('editEmployeePosition')?.value?.trim();
+    const department = document.getElementById('editEmployeeDepartment')?.value;
+    const payType = document.getElementById('editEmployeePayType')?.value;
+    const salary = parseFloat(document.getElementById('editEmployeeSalary')?.value) || 0;
+    const status = document.getElementById('editEmployeeStatus')?.value;
+    const location = document.getElementById('editEmployeeLocation')?.value?.trim();
+    const rating = parseFloat(document.getElementById('editEmployeeRating')?.value) || 0;
+    const emergencyContact = document.getElementById('editEmployeeEmergency')?.value?.trim();
+    const skillsInput = document.getElementById('editEmployeeSkills')?.value?.trim();
+    
+    // Validate required fields
+    if (!firstName || !lastName || !email || !phone || !position || !department || !payType || !location || !emergencyContact) {
+        showNotification('Please fill in all required fields.');
+        return;
+    }
+    
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        showNotification('Please enter a valid email address.');
+        return;
+    }
+    
+    // Parse skills
+    const skills = skillsInput ? skillsInput.split(',').map(skill => skill.trim()).filter(skill => skill) : [];
+    
+    // Store original values for activity log
+    const originalName = employee.fullName;
+    const changes = [];
+    
+    // Update employee data
+    if (employee.firstName !== firstName) {
+        changes.push(`first name: "${employee.firstName}" → "${firstName}"`);
+        employee.firstName = firstName;
+    }
+    if (employee.lastName !== lastName) {
+        changes.push(`last name: "${employee.lastName}" → "${lastName}"`);
+        employee.lastName = lastName;
+    }
+    if (employee.email !== email) {
+        changes.push(`email: "${employee.email}" → "${email}"`);
+        employee.email = email;
+    }
+    if (employee.phone !== phone) {
+        changes.push(`phone: "${employee.phone}" → "${phone}"`);
+        employee.phone = phone;
+    }
+    if (employee.position !== position) {
+        changes.push(`position: "${employee.position}" → "${position}"`);
+        employee.position = position;
+    }
+    if (employee.department !== department) {
+        changes.push(`department: "${employee.department}" → "${department}"`);
+        employee.department = department;
+    }
+    if (employee.payType !== payType) {
+        changes.push(`pay type: "${employee.payType}" → "${payType}"`);
+        employee.payType = payType;
+    }
+    if (employee.salary !== salary) {
+        changes.push(`salary: ${employee.payType === 'Salary' ? '$' + employee.salary.toLocaleString() : '$' + employee.salary + '/hr'} → ${payType === 'Salary' ? '$' + salary.toLocaleString() : '$' + salary + '/hr'}`);
+        employee.salary = salary;
+    }
+    if (employee.status !== status) {
+        changes.push(`status: "${employee.status}" → "${status}"`);
+        employee.status = status;
+    }
+    if (employee.location !== location) {
+        changes.push(`location: "${employee.location}" → "${location}"`);
+        employee.location = location;
+    }
+    if (employee.performanceRating !== rating) {
+        changes.push(`performance rating: ${employee.performanceRating} → ${rating}`);
+        employee.performanceRating = rating;
+    }
+    if (employee.emergencyContact !== emergencyContact) {
+        changes.push(`emergency contact updated`);
+        employee.emergencyContact = emergencyContact;
+    }
+    
+    // Update derived fields
+    employee.fullName = `${firstName} ${lastName}`;
+    
+    // Update skills if changed
+    const originalSkills = employee.skills.join(', ');
+    const newSkills = skills.join(', ');
+    if (originalSkills !== newSkills) {
+        changes.push(`skills updated`);
+        employee.skills = skills;
+    }
+    
+    // Refresh the employee display
+    populateEmployeeTable();
+    populateEmployeeCards();
+    populateHRStats();
+    
+    // Add activity log entry
+    if (changes.length > 0) {
+        const changeText = changes.length > 3 
+            ? `Updated ${changes.length} fields for employee "${originalName}"` 
+            : `Updated ${originalName}: ${changes.slice(0, 2).join(', ')}${changes.length > 2 ? ' and more' : ''}`;
+        addActivity('hr', '👤', changeText);
+    }
+    
+    // Close modal and show success message
+    closeModal();
+    const message = changes.length > 0 
+        ? `Employee "${employee.fullName}" updated successfully!`
+        : 'No changes were made.';
+    showNotification(message);
+}
+
+// Supply Chain data population functions
+function populateSupplyChainTabs() {
+    populateVendorTable();
+    populatePurchaseOrderTable();
+    populateShipmentTable();
+    populateWarehouseCards();
+}
+
+function populateVendorTable() {
+    const tbody = document.getElementById('vendorTableBody');
+    if (!tbody) return;
+    
+    tbody.innerHTML = '';
+    
+    appData.supplyChain.vendors.forEach(vendor => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${vendor.name}</td>
+            <td>${vendor.category}</td>
+            <td><span class="status-badge ${vendor.status.toLowerCase()}">${vendor.status}</span></td>
+            <td>⭐ ${vendor.rating}</td>
+            <td>${vendor.onTimeDelivery}%</td>
+            <td>$${vendor.ytdSpend.toLocaleString()}</td>
+            <td>
+                <button class="action-btn view" onclick="viewVendor('${vendor.id}')">View</button>
+                <button class="action-btn edit" onclick="editVendor('${vendor.id}')">Contact</button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+function populatePurchaseOrderTable() {
+    const tbody = document.getElementById('poTableBody');
+    if (!tbody) return;
+    
+    tbody.innerHTML = '';
+    
+    appData.supplyChain.purchaseOrders.forEach(po => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${po.id}</td>
+            <td>${po.vendor}</td>
+            <td>${formatDate(po.date)}</td>
+            <td>$${po.totalAmount.toLocaleString()}</td>
+            <td><span class="status-badge ${po.status.toLowerCase().replace(' ', '-')}">${po.status}</span></td>
+            <td>${formatDate(po.expectedDelivery)}</td>
+            <td>
+                <button class="action-btn view" onclick="viewPurchaseOrder('${po.id}')">View</button>
+                <button class="action-btn edit" onclick="editPurchaseOrder('${po.id}')">Edit</button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+function populateShipmentTable() {
+    const tbody = document.getElementById('shipmentTableBody');
+    if (!tbody) return;
+    
+    tbody.innerHTML = '';
+    
+    appData.supplyChain.shipments.forEach(shipment => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${shipment.id}</td>
+            <td>${shipment.customer}</td>
+            <td>${shipment.carrier}</td>
+            <td>${shipment.trackingNumber}</td>
+            <td><span class="status-badge ${shipment.status.toLowerCase().replace(' ', '-')}">${shipment.status}</span></td>
+            <td>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${shipment.progress}%"></div>
+                </div>
+                <span class="progress-text">${shipment.progress}%</span>
+            </td>
+            <td>
+                <button class="action-btn view" onclick="viewShipment('${shipment.id}')">Track</button>
+                <button class="action-btn edit" onclick="editShipment('${shipment.id}')">Details</button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+function populateWarehouseCards() {
+    const container = document.getElementById('warehouseCards');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    appData.supplyChain.warehouses.forEach(warehouse => {
+        const utilizationPercent = ((warehouse.used / warehouse.capacity) * 100).toFixed(1);
+        const card = document.createElement('div');
+        card.className = 'warehouse-card';
+        card.innerHTML = `
+            <h3>${warehouse.name}</h3>
+            <p class="location">📍 ${warehouse.location}</p>
+            <div class="warehouse-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Capacity</span>
+                    <span class="stat-value">${warehouse.capacity.toLocaleString()} sq ft</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Used</span>
+                    <span class="stat-value">${warehouse.used.toLocaleString()} sq ft</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Utilization</span>
+                    <span class="stat-value">${utilizationPercent}%</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">SKUs</span>
+                    <span class="stat-value">${warehouse.skus.toLocaleString()}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Value</span>
+                    <span class="stat-value">$${warehouse.value.toLocaleString()}</span>
+                </div>
+            </div>
+            <div class="utilization-bar">
+                <div class="utilization-fill" style="width: ${utilizationPercent}%"></div>
+            </div>
+            <div class="warehouse-actions">
+                <button class="action-btn view" onclick="viewWarehouse('${warehouse.id}')">View Details</button>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+// Supply Chain view functions
+function viewVendor(vendorId) {
+    const vendor = appData.supplyChain.vendors.find(v => v.id === vendorId);
+    if (!vendor) return;
+    
+    const content = `
+        <div class="form-group">
+            <strong>Vendor Name:</strong> ${vendor.name}<br><br>
+            <strong>Category:</strong> ${vendor.category}<br><br>
+            <strong>Status:</strong> <span class="status-badge ${vendor.status.toLowerCase()}">${vendor.status}</span><br><br>
+            <strong>Rating:</strong> ⭐ ${vendor.rating}/5.0<br><br>
+            <strong>Payment Terms:</strong> ${vendor.paymentTerms}<br><br>
+            <strong>Lead Time:</strong> ${vendor.leadTime}<br><br>
+            <strong>On-Time Delivery:</strong> ${vendor.onTimeDelivery}%<br><br>
+            <strong>Quality Score:</strong> ${vendor.qualityScore}%<br><br>
+            <strong>YTD Spend:</strong> $${vendor.ytdSpend.toLocaleString()}<br><br>
+            <hr>
+            <strong>Contact Information:</strong><br>
+            <strong>Contact Person:</strong> ${vendor.contactPerson}<br>
+            <strong>Phone:</strong> ${vendor.phone}<br>
+            <strong>Email:</strong> ${vendor.email}<br>
+            <strong>Address:</strong> ${vendor.address}
+        </div>
+    `;
+    showModal(`Vendor Details - ${vendor.name}`, content);
+}
+
+function editVendor(vendorId) {
+    const vendor = appData.supplyChain.vendors.find(v => v.id === vendorId);
+    if (!vendor) return;
+    
+    // For demo purposes, show contact info
+    const content = `
+        <div class="form-group">
+            <h4>Contact ${vendor.contactPerson}</h4>
+            <strong>Phone:</strong> ${vendor.phone}<br><br>
+            <strong>Email:</strong> ${vendor.email}<br><br>
+            <strong>Address:</strong> ${vendor.address}<br><br>
+            <div class="flex gap-8">
+                <button class="btn btn--primary" onclick="contactVendor('${vendorId}')">Send Email</button>
+                <button class="btn btn--outline" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    `;
+    showModal(`Contact ${vendor.name}`, content);
+}
+
+function contactVendor(vendorId) {
+    const vendor = appData.supplyChain.vendors.find(v => v.id === vendorId);
+    if (vendor) {
+        addActivity('contact', '📞', `Contacted ${vendor.name} - ${vendor.contactPerson}`);
+        showNotification(`Email sent to ${vendor.contactPerson} at ${vendor.name}`);
+    }
+    closeModal();
+}
+
+function viewPurchaseOrder(poId) {
+    const po = appData.supplyChain.purchaseOrders.find(p => p.id === poId);
+    if (!po) return;
+    
+    let itemsHTML = '<strong>Items:</strong><br>';
+    po.items.forEach(item => {
+        const product = appData.products.find(p => p.id === item.productId);
+        const productName = product ? product.name : `Product ${item.productId}`;
+        itemsHTML += `• ${productName}: ${item.quantity} @ $${item.unitPrice.toFixed(2)}<br>`;
+    });
+    
+    const content = `
+        <div class="form-group">
+            <strong>PO Number:</strong> ${po.id}<br><br>
+            <strong>Vendor:</strong> ${po.vendor}<br><br>
+            <strong>Date:</strong> ${formatDate(po.date)}<br><br>
+            <strong>Total Amount:</strong> $${po.totalAmount.toLocaleString()}<br><br>
+            <strong>Status:</strong> <span class="status-badge ${po.status.toLowerCase().replace(' ', '-')}">${po.status}</span><br><br>
+            <strong>Expected Delivery:</strong> ${formatDate(po.expectedDelivery)}<br><br>
+            <strong>Approver:</strong> ${po.approver}<br><br>
+            ${itemsHTML}<br>
+            <strong>Notes:</strong> ${po.notes}
+        </div>
+    `;
+    showModal(`Purchase Order - ${po.id}`, content);
+}
+
+function editPurchaseOrder(poId) {
+    showNotification('PO editing functionality would be implemented here');
+}
+
+function viewShipment(shipmentId) {
+    const shipment = appData.supplyChain.shipments.find(s => s.id === shipmentId);
+    if (!shipment) return;
+    
+    const content = `
+        <div class="form-group">
+            <strong>Shipment ID:</strong> ${shipment.id}<br><br>
+            <strong>Order ID:</strong> ${shipment.orderId}<br><br>
+            <strong>Customer:</strong> ${shipment.customer}<br><br>
+            <strong>Carrier:</strong> ${shipment.carrier}<br><br>
+            <strong>Tracking Number:</strong> ${shipment.trackingNumber}<br><br>
+            <strong>Status:</strong> <span class="status-badge ${shipment.status.toLowerCase().replace(' ', '-')}">${shipment.status}</span><br><br>
+            <strong>Current Location:</strong> ${shipment.currentLocation}<br><br>
+            <strong>Progress:</strong> 
+            <div class="progress-bar" style="margin: 8px 0;">
+                <div class="progress-fill" style="width: ${shipment.progress}%"></div>
+            </div>
+            ${shipment.progress}% Complete<br><br>
+            <strong>Estimated Delivery:</strong> ${formatDate(shipment.estimatedDelivery)}<br><br>
+            <strong>Items:</strong> ${shipment.items}<br>
+            <strong>Weight:</strong> ${shipment.weight}<br>
+            <strong>Value:</strong> $${shipment.value.toLocaleString()}<br><br>
+            <strong>Created:</strong> ${formatDate(shipment.createdDate)}<br>
+            ${shipment.deliveredDate ? `<strong>Delivered:</strong> ${formatDate(shipment.deliveredDate)}` : ''}
+        </div>
+    `;
+    showModal(`Shipment Tracking - ${shipment.id}`, content);
+}
+
+function editShipment(shipmentId) {
+    // Show tracking details
+    viewShipment(shipmentId);
+}
+
+function viewWarehouse(warehouseId) {
+    const warehouse = appData.supplyChain.warehouses.find(w => w.id === warehouseId);
+    if (!warehouse) return;
+    
+    const utilizationPercent = ((warehouse.used / warehouse.capacity) * 100).toFixed(1);
+    const freeSpace = warehouse.capacity - warehouse.used;
+    
+    const content = `
+        <div class="form-group">
+            <strong>Warehouse Name:</strong> ${warehouse.name}<br><br>
+            <strong>Location:</strong> 📍 ${warehouse.location}<br><br>
+            <strong>Status:</strong> <span class="status-badge ${warehouse.status.toLowerCase()}">${warehouse.status}</span><br><br>
+            <strong>Capacity:</strong> ${warehouse.capacity.toLocaleString()} sq ft<br><br>
+            <strong>Used Space:</strong> ${warehouse.used.toLocaleString()} sq ft<br><br>
+            <strong>Free Space:</strong> ${freeSpace.toLocaleString()} sq ft<br><br>
+            <strong>Utilization:</strong> ${utilizationPercent}%<br>
+            <div class="utilization-bar" style="margin: 8px 0; height: 20px; background: #f0f0f0; border-radius: 10px;">
+                <div class="utilization-fill" style="width: ${utilizationPercent}%; height: 100%; background: #1FB8CD; border-radius: 10px;"></div>
+            </div><br>
+            <strong>Total SKUs:</strong> ${warehouse.skus.toLocaleString()}<br><br>
+            <strong>Inventory Value:</strong> $${warehouse.value.toLocaleString()}
+        </div>
+    `;
+    showModal(`Warehouse Details - ${warehouse.name}`, content);
+}
+
+// ===== SECURITY SERVICES SYSTEM =====
+
+// Initialize security and encryption services
+function initializeSecurityServices(userData) {
+    try {
+        console.log('🔐 Initializing security services...');
+        
+        // Initialize Encryption Service
+        if (typeof EncryptionService !== 'undefined') {
+            encryptionService = new EncryptionService({
+                masterKey: generateSecurityKey(userData.email) // Generate user-specific key
+            });
+            window.encryptionService = encryptionService;
+            console.log('✅ EncryptionService initialized');
+        } else {
+            console.warn('⚠️ EncryptionService class not found');
+        }
+        
+        // Initialize Audit Logger
+        if (typeof AuditLogger !== 'undefined') {
+            auditLogger = new AuditLogger({
+                userId: userData.email,
+                userName: userData.name,
+                environment: 'development', // Would be 'production' in real deployment
+                enableRemoteLogging: false // Would be true with proper backend
+            });
+            window.auditLogger = auditLogger;
+            console.log('✅ AuditLogger initialized');
+        } else {
+            console.warn('⚠️ AuditLogger class not found');
+        }
+        
+        // Initialize Security Manager
+        if (typeof SecurityManager !== 'undefined') {
+            securityManager = new SecurityManager({
+                encryptionService: encryptionService,
+                auditLogger: auditLogger,
+                sessionTimeout: 30 * 60 * 1000, // 30 minutes
+                maxFailedAttempts: 3
+            });
+            window.securityManager = securityManager;
+            console.log('✅ SecurityManager initialized');
+            
+            // Register current user session
+            securityManager.registerSession(userData.email, {
+                name: userData.name,
+                role: userData.role,
+                permissions: userData.permissions || 'basic',
+                loginTime: new Date().toISOString()
+            });
+            
+        } else {
+            console.warn('⚠️ SecurityManager class not found');
+        }
+        
+        // Log security services initialization
+        if (auditLogger) {
+            auditLogger.logEvent({
+                category: 'security',
+                action: 'services_initialized',
+                description: `Security services initialized for user: ${userData.name}`,
+                severity: 'info',
+                userId: userData.email,
+                metadata: {
+                    role: userData.role,
+                    permissions: userData.permissions,
+                    timestamp: new Date().toISOString()
+                }
+            });
+        }
+        
+        console.log('✅ Security services initialized successfully');
+        
+    } catch (error) {
+        console.error('❌ Failed to initialize security services:', error);
+        showNotification('Security services failed to initialize. Some features may be limited.');
+    }
+}
+
+// Generate a user-specific security key
+function generateSecurityKey(userEmail) {
+    // In production, this would use proper key derivation (PBKDF2, scrypt, etc.)
+    // For demo purposes, create a deterministic but unique key per user
+    const baseKey = 'ConstructERP-Security-2024';
+    let hash = 0;
+    const input = baseKey + userEmail;
+    
+    for (let i = 0; i < input.length; i++) {
+        const char = input.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; // Convert to 32-bit integer
+    }
+    
+    // Convert hash to a 32-character key
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let key = '';
+    let tempHash = Math.abs(hash);
+    
+    for (let i = 0; i < 32; i++) {
+        key += chars[tempHash % chars.length];
+        tempHash = Math.floor(tempHash / chars.length) + (i * 17); // Add variety
+    }
+    
+    return key;
+}
+
+// ===== ROLE-BASED DASHBOARD SYSTEM =====
+
+// Initialize role management system
+function initializeRoleBasedSystem(userData) {
+    try {
+        console.log('🔑 Initializing role-based system for:', userData.name, '(' + userData.role + ')');
+        
+        // Initialize security services first
+        initializeSecurityServices(userData);
+        
+        // Check if RoleManager class is available
+        if (typeof RoleManager === 'undefined') {
+            console.error('❌ RoleManager class not found. Make sure role-manager.js is loaded.');
+            return;
+        }
+        
+        // Initialize RoleManager with user data
+        roleManager = new RoleManager(userData.role, userData.name, {
+            email: userData.email,
+            permissions: userData.permissions || 'basic'
+        });
+        
+        // Make role manager globally available for debugging
+        window.roleManager = roleManager;
+        
+        console.log('✅ Role management system initialized successfully');
+        
+    } catch (error) {
+        console.error('❌ Failed to initialize role-based system:', error);
+        showNotification('Role management system failed to initialize. Some features may be limited.');
+    }
+}
+
+// Initialize role-based dashboard
+function initializeRoleBasedDashboard() {
+    try {
+        console.log('📊 Initializing role-based dashboard...');
+        
+        // Check if roleManager is available
+        if (!roleManager) {
+            console.warn('⚠️ Role manager not initialized. Using default dashboard configuration.');
+            return;
+        }
+        
+        // Check if DashboardWidgets class is available
+        if (typeof DashboardWidgets === 'undefined') {
+            console.error('❌ DashboardWidgets class not found. Make sure dashboard-widgets.js is loaded.');
+            return;
+        }
+        
+        // Initialize dashboard widgets with role manager
+        dashboardWidgets = new DashboardWidgets(roleManager, {
+            container: document.getElementById('dashboardWidgetsContainer'),
+            data: appData
+        });
+        
+        // Render the appropriate widgets for the current user's role
+        dashboardWidgets.renderWidgets();
+        
+        console.log('✅ Role-based dashboard initialized successfully');
+        
+    } catch (error) {
+        console.error('❌ Failed to initialize role-based dashboard:', error);
+        showNotification('Role-based dashboard failed to initialize. Using default dashboard.');
+    }
+}
+
+// Refresh dashboard widgets when switching back to dashboard
+function refreshDashboardWidgets() {
+    try {
+        console.log('🔄 Refreshing dashboard widgets...');
+        
+        // Check if dashboard widgets system is available
+        if (!dashboardWidgets) {
+            console.warn('⚠️ Dashboard widgets not initialized. Attempting to initialize...');
+            initializeRoleBasedDashboard();
+            return;
+        }
+        
+        // Update data in the widgets system
+        dashboardWidgets.updateData(appData);
+        
+        // Re-render widgets with fresh data
+        dashboardWidgets.refreshWidgets();
+        
+        console.log('✅ Dashboard widgets refreshed successfully');
+        
+    } catch (error) {
+        console.error('❌ Failed to refresh dashboard widgets:', error);
+        
+        // Attempt to reinitialize if refresh fails
+        console.log('🔄 Attempting to reinitialize dashboard widgets...');
+        try {
+            initializeRoleBasedDashboard();
+        } catch (reinitError) {
+            console.error('❌ Failed to reinitialize dashboard widgets:', reinitError);
+            showNotification('Dashboard refresh failed. Please reload the page.');
+        }
+    }
 }

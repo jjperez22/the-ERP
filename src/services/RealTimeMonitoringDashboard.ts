@@ -1,5 +1,5 @@
 // src/services/RealTimeMonitoringDashboard.ts
-import { Injectable } from '@varld/warp';
+import { Service } from '@varld/warp';
 import { EventEmitter } from 'events';
 import { OpenAI } from 'openai';
 
@@ -96,7 +96,7 @@ export interface AIVisualizationSuggestion {
   suggestedPosition: { x: number; y: number; width: number; height: number };
 }
 
-@Injectable()
+@Service()
 export class RealTimeMonitoringDashboard extends EventEmitter {
   private openai: OpenAI;
   private metrics: Map<string, DashboardMetric> = new Map();
@@ -818,7 +818,7 @@ class AIVisualizationEngine {
 
 class AnomalyDetector {
   async detectAnomalies(metric: DashboardMetric): Promise<any[]> {
-    const anomalies = [];
+    const anomalies: any[] = [];
     const recentData = metric.history.slice(-20);
     
     if (recentData.length < 10) return anomalies;

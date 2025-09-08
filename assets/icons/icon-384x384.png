@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="384" height="384" viewBox="0 0 384 384" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1FB8CD"/>
+      <stop offset="100%" style="stop-color:#0d9488"/>
+    </linearGradient>
+    <linearGradient id="building-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff"/>
+      <stop offset="100%" style="stop-color:#f8fafc"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background circle -->
+  <rect width="384" height="384" rx="76.80000000000001" fill="url(#bg-gradient)"/>
+  
+  <!-- Construction building icon -->
+  <g transform="translate(76.80000000000001, 57.599999999999994)">
+    <!-- Main building -->
+    <rect x="0" y="96" width="96" height="230.39999999999998" fill="url(#building-gradient)" stroke="#ffffff" stroke-width="2"/>
+    
+    <!-- Second building -->
+    <rect x="115.19999999999999" y="134.39999999999998" width="96" height="192" fill="url(#building-gradient)" stroke="#ffffff" stroke-width="2"/>
+    
+    <!-- Third building -->
+    <rect x="230.39999999999998" y="57.599999999999994" width="96" height="268.79999999999995" fill="url(#building-gradient)" stroke="#ffffff" stroke-width="2"/>
+    
+    <!-- Windows on buildings -->
+    <rect x="19.200000000000003" y="134.39999999999998" width="23.04" height="30.72" fill="#1FB8CD" opacity="0.7"/>
+    <rect x="53.760000000000005" y="134.39999999999998" width="23.04" height="30.72" fill="#1FB8CD" opacity="0.7"/>
+    <rect x="19.200000000000003" y="192" width="23.04" height="30.72" fill="#1FB8CD" opacity="0.7"/>
+    <rect x="53.760000000000005" y="192" width="23.04" height="30.72" fill="#1FB8CD" opacity="0.7"/>
+    
+    <rect x="134.39999999999998" y="172.8" width="23.04" height="30.72" fill="#1FB8CD" opacity="0.7"/>
+    <rect x="168.96" y="172.8" width="23.04" height="30.72" fill="#1FB8CD" opacity="0.7"/>
+    <rect x="134.39999999999998" y="230.39999999999998" width="23.04" height="30.72" fill="#1FB8CD" opacity="0.7"/>
+    
+    <rect x="249.60000000000002" y="96" width="23.04" height="30.72" fill="#1FB8CD" opacity="0.7"/>
+    <rect x="284.15999999999997" y="96" width="23.04" height="30.72" fill="#1FB8CD" opacity="0.7"/>
+    <rect x="249.60000000000002" y="153.60000000000002" width="23.04" height="30.72" fill="#1FB8CD" opacity="0.7"/>
+    <rect x="284.15999999999997" y="153.60000000000002" width="23.04" height="30.72" fill="#1FB8CD" opacity="0.7"/>
+    <rect x="249.60000000000002" y="211.20000000000002" width="23.04" height="30.72" fill="#1FB8CD" opacity="0.7"/>
+    <rect x="284.15999999999997" y="211.20000000000002" width="23.04" height="30.72" fill="#1FB8CD" opacity="0.7"/>
+    
+    <!-- Crane -->
+    <line x1="38.400000000000006" y1="96" x2="38.400000000000006" y2="19.200000000000003" stroke="#ffffff" stroke-width="3"/>
+    <line x1="38.400000000000006" y1="19.200000000000003" x2="153.60000000000002" y2="19.200000000000003" stroke="#ffffff" stroke-width="3"/>
+    <line x1="38.400000000000006" y1="38.400000000000006" x2="134.39999999999998" y2="19.200000000000003" stroke="#ffffff" stroke-width="2"/>
+    
+    <!-- Crane hook -->
+    <circle cx="134.39999999999998" cy="46.08" r="5.76" fill="#ffffff"/>
+    <line x1="134.39999999999998" y1="19.200000000000003" x2="134.39999999999998" y2="46.08" stroke="#ffffff" stroke-width="1"/>
+  </g>
+</svg>

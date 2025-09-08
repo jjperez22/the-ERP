@@ -1,0 +1,1516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Template Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        /* Main Container */
+        .template-manager {
+            display: flex;
+            height: 100vh;
+            background: white;
+        }
+        
+        /* Header Bar */
+        .header-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+        
+        .header-icon {
+            font-size: 24px;
+        }
+        
+        .header-text h1 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .header-text p {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-top: 2px;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: #f8f9fa;
+            border-right: 1px solid #e9ecef;
+            margin-top: 60px;
+            height: calc(100vh - 60px);
+            overflow-y: auto;
+        }
+        
+        .sidebar-section {
+            padding: 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Template Categories */
+        .template-categories {
+            list-style: none;
+        }
+        
+        .category-item {
+            padding: 10px 12px;
+            margin-bottom: 4px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+        
+        .category-item:hover {
+            background: #e9ecef;
+        }
+        
+        .category-item.active {
+            background: #007bff;
+            color: white;
+        }
+        
+        .category-icon {
+            margin-right: 8px;
+        }
+        
+        .category-count {
+            background: rgba(0,0,0,0.1);
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 11px;
+        }
+        
+        .active .category-count {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .quick-action-btn {
+            padding: 10px 12px;
+            border: 2px solid #007bff;
+            border-radius: 6px;
+            background: white;
+            color: #007bff;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .quick-action-btn:hover {
+            background: #007bff;
+            color: white;
+        }
+        
+        .quick-action-btn.primary {
+            background: #007bff;
+            color: white;
+        }
+        
+        .quick-action-btn.primary:hover {
+            background: #0056b3;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-top: 60px;
+            height: calc(100vh - 60px);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Toolbar */
+        .toolbar {
+            background: white;
+            border-bottom: 1px solid #e9ecef;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 60px;
+        }
+        
+        .toolbar-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .search-box {
+            position: relative;
+        }
+        
+        .search-input {
+            width: 300px;
+            padding: 8px 12px 8px 36px;
+            border: 2px solid #e9ecef;
+            border-radius: 20px;
+            font-size: 14px;
+            transition: border-color 0.2s ease;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
+        
+        .view-toggle {
+            display: flex;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        .view-btn {
+            padding: 8px 12px;
+            background: white;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        
+        .view-btn.active {
+            background: #007bff;
+            color: white;
+        }
+        
+        .toolbar-right {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        
+        .filter-dropdown {
+            padding: 8px 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            background: white;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+        }
+        
+        /* Template Grid */
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .template-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .template-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+        
+        .template-preview {
+            height: 180px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: #6c757d;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .template-preview::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, #f1f3f4 25%, transparent 25%), 
+                        linear-gradient(-45deg, #f1f3f4 25%, transparent 25%), 
+                        linear-gradient(45deg, transparent 75%, #f1f3f4 75%), 
+                        linear-gradient(-45deg, transparent 75%, #f1f3f4 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            opacity: 0.3;
+        }
+        
+        .template-info {
+            padding: 16px;
+        }
+        
+        .template-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        .template-description {
+            font-size: 13px;
+            color: #6c757d;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        
+        .template-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #868e96;
+        }
+        
+        .template-category {
+            background: #e9ecef;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+        
+        .template-actions {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            display: flex;
+            gap: 6px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        
+        .template-card:hover .template-actions {
+            opacity: 1;
+        }
+        
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255,255,255,0.9);
+            color: #333;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        
+        .action-btn:hover {
+            background: #007bff;
+            color: white;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: #007bff;
+            border: 2px solid #007bff;
+        }
+        
+        .btn-outline:hover {
+            background: #007bff;
+            color: white;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+        
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        
+        .empty-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #495057;
+        }
+        
+        .empty-description {
+            font-size: 14px;
+            margin-bottom: 24px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.5;
+        }
+        
+        /* Template Preview Modal */
+        .preview-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .preview-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .preview-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 800px;
+            height: 80%;
+            max-height: 600px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        
+        .preview-modal.active .preview-content {
+            transform: scale(1);
+        }
+        
+        .preview-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .preview-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .preview-close {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: #f8f9fa;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.2s ease;
+        }
+        
+        .preview-close:hover {
+            background: #e9ecef;
+        }
+        
+        .preview-body {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+        }
+        
+        .preview-template {
+            width: 100%;
+            height: 100%;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            font-size: 64px;
+            color: #6c757d;
+            position: relative;
+            min-height: 300px;
+        }
+        
+        .preview-template::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, #f1f3f4 25%, transparent 25%), 
+                        linear-gradient(-45deg, #f1f3f4 25%, transparent 25%), 
+                        linear-gradient(45deg, transparent 75%, #f1f3f4 75%), 
+                        linear-gradient(-45deg, transparent 75%, #f1f3f4 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            opacity: 0.2;
+            border-radius: 8px;
+        }
+        
+        .preview-placeholder {
+            z-index: 1;
+            text-align: center;
+        }
+        
+        .preview-placeholder-text {
+            font-size: 16px;
+            color: #6c757d;
+            margin-top: 16px;
+        }
+        
+        .preview-footer {
+            padding: 16px 24px;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .preview-info {
+            font-size: 14px;
+            color: #6c757d;
+        }
+        
+        .preview-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        /* Context Menu */
+        .context-menu {
+            position: fixed;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 8px 0;
+            z-index: 1001;
+            min-width: 180px;
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(0.95);
+            transition: all 0.15s ease;
+        }
+        
+        .context-menu.active {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
+        
+        .context-menu-item {
+            padding: 10px 16px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: background-color 0.15s ease;
+        }
+        
+        .context-menu-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .context-menu-item.danger:hover {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .context-menu-separator {
+            height: 1px;
+            background: #e9ecef;
+            margin: 4px 0;
+        }
+        
+        /* Template Selection */
+        .template-card.selected {
+            border: 2px solid #007bff;
+            box-shadow: 0 4px 20px rgba(0, 123, 255, 0.3);
+        }
+        
+        .selection-toolbar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(-50%) translateY(20px);
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+        
+        .selection-toolbar.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+        
+        .selection-count {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .selection-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .selection-btn {
+            padding: 6px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            background: transparent;
+            color: white;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .selection-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .template-manager {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                max-height: 200px;
+                margin-top: 0;
+            }
+            
+            .main-content {
+                margin-top: 0;
+                height: auto;
+                flex: 1;
+            }
+            
+            .toolbar {
+                flex-direction: column;
+                gap: 12px;
+                align-items: stretch;
+            }
+            
+            .toolbar-left {
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .search-input {
+                width: 100%;
+            }
+            
+            .template-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="template-manager">
+        <!-- Header Bar -->
+        <div class="header-bar">
+            <div class="header-title">
+                <div class="header-icon">📊</div>
+                <div class="header-text">
+                    <h1>Report Template Manager</h1>
+                    <p>Create and manage custom report templates</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-outline">📤 Import</button>
+                <button class="btn btn-primary">➕ New Template</button>
+            </div>
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <div class="section-title">Template Categories</div>
+                <ul class="template-categories">
+                    <li class="category-item active">
+                        <span><span class="category-icon">📋</span>All Templates</span>
+                        <span class="category-count">12</span>
+                    </li>
+                    <li class="category-item">
+                        <span><span class="category-icon">🏗️</span>Project Reports</span>
+                        <span class="category-count">5</span>
+                    </li>
+                    <li class="category-item">
+                        <span><span class="category-icon">💰</span>Financial Reports</span>
+                        <span class="category-count">3</span>
+                    </li>
+                    <li class="category-item">
+                        <span><span class="category-icon">👥</span>Team Reports</span>
+                        <span class="category-count">2</span>
+                    </li>
+                    <li class="category-item">
+                        <span><span class="category-icon">📈</span>Analytics</span>
+                        <span class="category-count">2</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="section-title">Quick Actions</div>
+                <div class="quick-actions">
+                    <button class="quick-action-btn primary">
+                        <span>✨</span>Create from Blank
+                    </button>
+                    <button class="quick-action-btn">
+                        <span>📋</span>Duplicate Template
+                    </button>
+                    <button class="quick-action-btn">
+                        <span>📥</span>Import Template
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Toolbar -->
+            <div class="toolbar">
+                <div class="toolbar-left">
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" class="search-input" placeholder="Search templates...">
+                    </div>
+                    
+                    <div class="view-toggle">
+                        <button class="view-btn active">🔲 Grid</button>
+                        <button class="view-btn">📋 List</button>
+                    </div>
+                </div>
+                
+                <div class="toolbar-right">
+                    <select class="filter-dropdown">
+                        <option>Sort by: Recent</option>
+                        <option>Sort by: Name</option>
+                        <option>Sort by: Category</option>
+                        <option>Sort by: Modified</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Content Area -->
+            <div class="content-area">
+                <div class="template-grid">
+                    <!-- Project Status Report Template -->
+                    <div class="template-card">
+                        <div class="template-preview">
+                            📊
+                            <div class="template-actions">
+                                <button class="action-btn" title="Edit">✏️</button>
+                                <button class="action-btn" title="Duplicate">📋</button>
+                                <button class="action-btn" title="Delete">🗑️</button>
+                            </div>
+                        </div>
+                        <div class="template-info">
+                            <div class="template-title">Project Status Report</div>
+                            <div class="template-description">Comprehensive project status overview with timeline, budget, and milestone tracking.</div>
+                            <div class="template-meta">
+                                <span class="template-category">Project Reports</span>
+                                <span>Modified 2 days ago</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Financial Summary Template -->
+                    <div class="template-card">
+                        <div class="template-preview">
+                            💰
+                            <div class="template-actions">
+                                <button class="action-btn" title="Edit">✏️</button>
+                                <button class="action-btn" title="Duplicate">📋</button>
+                                <button class="action-btn" title="Delete">🗑️</button>
+                            </div>
+                        </div>
+                        <div class="template-info">
+                            <div class="template-title">Financial Summary</div>
+                            <div class="template-description">Monthly financial overview with expenses, revenue, and profit analysis.</div>
+                            <div class="template-meta">
+                                <span class="template-category">Financial Reports</span>
+                                <span>Modified 1 week ago</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Team Performance Template -->
+                    <div class="template-card">
+                        <div class="template-preview">
+                            👥
+                            <div class="template-actions">
+                                <button class="action-btn" title="Edit">✏️</button>
+                                <button class="action-btn" title="Duplicate">📋</button>
+                                <button class="action-btn" title="Delete">🗑️</button>
+                            </div>
+                        </div>
+                        <div class="template-info">
+                            <div class="template-title">Team Performance</div>
+                            <div class="template-description">Individual and team productivity metrics with performance indicators.</div>
+                            <div class="template-meta">
+                                <span class="template-category">Team Reports</span>
+                                <span>Modified 3 days ago</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Blank Template -->
+                    <div class="template-card">
+                        <div class="template-preview" style="border: 2px dashed #dee2e6;">
+                            ➕
+                            <div class="template-actions">
+                                <button class="action-btn" title="Create">✨</button>
+                            </div>
+                        </div>
+                        <div class="template-info">
+                            <div class="template-title">Blank Template</div>
+                            <div class="template-description">Start with a clean slate and build your custom report from scratch.</div>
+                            <div class="template-meta">
+                                <span class="template-category">Templates</span>
+                                <span>Click to create</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Preview Modal -->
+    <div class="preview-modal" id="previewModal">
+        <div class="preview-content">
+            <div class="preview-header">
+                <div class="preview-title" id="previewTitle">Template Preview</div>
+                <button class="preview-close" id="previewClose">✕</button>
+            </div>
+            <div class="preview-body">
+                <div class="preview-template">
+                    <div class="preview-placeholder">
+                        <div id="previewIcon">📊</div>
+                        <div class="preview-placeholder-text">Template preview will be displayed here</div>
+                    </div>
+                </div>
+            </div>
+            <div class="preview-footer">
+                <div class="preview-info" id="previewInfo">Click Edit to customize this template</div>
+                <div class="preview-actions">
+                    <button class="btn btn-outline" id="previewEdit">✏️ Edit</button>
+                    <button class="btn btn-primary" id="previewUse">🚀 Use Template</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Context Menu -->
+    <div class="context-menu" id="contextMenu">
+        <div class="context-menu-item" data-action="preview">
+            <span>👁️</span>
+            <span>Preview</span>
+        </div>
+        <div class="context-menu-item" data-action="edit">
+            <span>✏️</span>
+            <span>Edit</span>
+        </div>
+        <div class="context-menu-item" data-action="duplicate">
+            <span>📋</span>
+            <span>Duplicate</span>
+        </div>
+        <div class="context-menu-separator"></div>
+        <div class="context-menu-item" data-action="export">
+            <span>📤</span>
+            <span>Export</span>
+        </div>
+        <div class="context-menu-item" data-action="share">
+            <span>🔗</span>
+            <span>Share</span>
+        </div>
+        <div class="context-menu-separator"></div>
+        <div class="context-menu-item danger" data-action="delete">
+            <span>🗑️</span>
+            <span>Delete</span>
+        </div>
+    </div>
+    
+    <!-- Selection Toolbar -->
+    <div class="selection-toolbar" id="selectionToolbar">
+        <div class="selection-count" id="selectionCount">2 templates selected</div>
+        <div class="selection-actions">
+            <button class="selection-btn" data-action="bulk-duplicate">📋 Duplicate</button>
+            <button class="selection-btn" data-action="bulk-export">📤 Export</button>
+            <button class="selection-btn" data-action="bulk-delete">🗑️ Delete</button>
+            <button class="selection-btn" data-action="clear-selection">✕ Clear</button>
+        </div>
+    </div>
+    
+    <script>
+        // Report Template Manager - Basic JavaScript Functionality
+        class TemplateManager {
+            constructor() {
+                this.selectedTemplates = new Set();
+                this.currentContextTemplate = null;
+                
+                this.templates = [
+                    {
+                        id: 1,
+                        title: 'Project Status Report',
+                        description: 'Comprehensive project status overview with timeline, budget, and milestone tracking.',
+                        category: 'Project Reports',
+                        icon: '📊',
+                        modified: '2 days ago'
+                    },
+                    {
+                        id: 2,
+                        title: 'Financial Summary',
+                        description: 'Monthly financial overview with expenses, revenue, and profit analysis.',
+                        category: 'Financial Reports',
+                        icon: '💰',
+                        modified: '1 week ago'
+                    },
+                    {
+                        id: 3,
+                        title: 'Team Performance',
+                        description: 'Individual and team productivity metrics with performance indicators.',
+                        category: 'Team Reports',
+                        icon: '👥',
+                        modified: '3 days ago'
+                    }
+                ];
+                
+                this.currentCategory = 'All Templates';
+                this.currentView = 'grid';
+                this.searchQuery = '';
+                
+                this.init();
+            }
+            
+            init() {
+                this.bindEvents();
+                this.renderTemplates();
+                this.updateCategoryCounts();
+            }
+            
+            bindEvents() {
+                // Category filtering
+                const categoryItems = document.querySelectorAll('.category-item');
+                categoryItems.forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        const categoryName = item.querySelector('span').textContent.trim();
+                        this.filterByCategory(categoryName, item);
+                    });
+                });
+                
+                // Search functionality
+                const searchInput = document.querySelector('.search-input');
+                searchInput.addEventListener('input', (e) => {
+                    this.searchQuery = e.target.value.toLowerCase();
+                    this.renderTemplates();
+                });
+                
+                // View toggle
+                const viewButtons = document.querySelectorAll('.view-btn');
+                viewButtons.forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const view = button.textContent.includes('Grid') ? 'grid' : 'list';
+                        this.toggleView(view, button);
+                    });
+                });
+                
+                // Template card actions
+                document.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('action-btn')) {
+                        const action = e.target.getAttribute('title');
+                        const templateCard = e.target.closest('.template-card');
+                        const templateTitle = templateCard.querySelector('.template-title').textContent;
+                        this.handleTemplateAction(action, templateTitle);
+                    }
+                });
+                
+                // Quick Action buttons
+                const quickActionBtns = document.querySelectorAll('.quick-action-btn');
+                quickActionBtns.forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const actionText = btn.textContent.trim();
+                        this.handleQuickAction(actionText);
+                    });
+                });
+                
+                // Header buttons
+                const headerButtons = document.querySelectorAll('.header-actions .btn');
+                headerButtons.forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const actionText = btn.textContent.trim();
+                        this.handleHeaderAction(actionText);
+                    });
+                });
+                
+                // Sort dropdown
+                const sortDropdown = document.querySelector('.filter-dropdown');
+                sortDropdown.addEventListener('change', (e) => {
+                    this.handleSortChange(e.target.value);
+                });
+            }
+            
+            filterByCategory(categoryName, clickedItem) {
+                // Update active category
+                document.querySelectorAll('.category-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                clickedItem.classList.add('active');
+                
+                this.currentCategory = categoryName;
+                this.renderTemplates();
+                
+                // Add subtle animation
+                const contentArea = document.querySelector('.content-area');
+                contentArea.style.opacity = '0.7';
+                setTimeout(() => {
+                    contentArea.style.opacity = '1';
+                }, 150);
+            }
+            
+            toggleView(view, clickedButton) {
+                // Update active view button
+                document.querySelectorAll('.view-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                clickedButton.classList.add('active');
+                
+                this.currentView = view;
+                
+                const templateGrid = document.querySelector('.template-grid');
+                if (view === 'list') {
+                    templateGrid.style.gridTemplateColumns = '1fr';
+                    templateGrid.style.gap = '12px';
+                } else {
+                    templateGrid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(250px, 1fr))';
+                    templateGrid.style.gap = '24px';
+                }
+                
+                this.showNotification(`Switched to ${view} view`, 'info');
+            }
+            
+            renderTemplates() {
+                const templateGrid = document.querySelector('.template-grid');
+                let filteredTemplates = this.templates;
+                
+                // Filter by category
+                if (this.currentCategory !== 'All Templates') {
+                    filteredTemplates = filteredTemplates.filter(template => 
+                        template.category === this.currentCategory
+                    );
+                }
+                
+                // Filter by search query
+                if (this.searchQuery) {
+                    filteredTemplates = filteredTemplates.filter(template =>
+                        template.title.toLowerCase().includes(this.searchQuery) ||
+                        template.description.toLowerCase().includes(this.searchQuery) ||
+                        template.category.toLowerCase().includes(this.searchQuery)
+                    );
+                }
+                
+                // Clear existing templates (except blank template)
+                const existingCards = templateGrid.querySelectorAll('.template-card:not(:last-child)');
+                existingCards.forEach(card => card.remove());
+                
+                // Render filtered templates
+                const blankTemplate = templateGrid.querySelector('.template-card:last-child');
+                filteredTemplates.forEach(template => {
+                    const templateCard = this.createTemplateCard(template);
+                    templateGrid.insertBefore(templateCard, blankTemplate);
+                });
+                
+                // Show empty state if no templates found
+                if (filteredTemplates.length === 0) {
+                    this.showEmptyState();
+                }
+            }
+            
+            createTemplateCard(template) {
+                const card = document.createElement('div');
+                card.className = 'template-card';
+                card.innerHTML = `
+                    <div class="template-preview">
+                        ${template.icon}
+                        <div class="template-actions">
+                            <button class="action-btn" title="Edit">✏️</button>
+                            <button class="action-btn" title="Duplicate">📋</button>
+                            <button class="action-btn" title="Delete">🗑️</button>
+                        </div>
+                    </div>
+                    <div class="template-info">
+                        <div class="template-title">${template.title}</div>
+                        <div class="template-description">${template.description}</div>
+                        <div class="template-meta">
+                            <span class="template-category">${template.category}</span>
+                            <span>Modified ${template.modified}</span>
+                        </div>
+                    </div>
+                `;
+                
+                // Add click handler for template selection
+                card.addEventListener('click', (e) => {
+                    if (!e.target.classList.contains('action-btn')) {
+                        this.selectTemplate(template);
+                    }
+                });
+                
+                return card;
+            }
+            
+            updateCategoryCounts() {
+                const categories = {
+                    'All Templates': this.templates.length,
+                    'Project Reports': this.templates.filter(t => t.category === 'Project Reports').length,
+                    'Financial Reports': this.templates.filter(t => t.category === 'Financial Reports').length,
+                    'Team Reports': this.templates.filter(t => t.category === 'Team Reports').length,
+                    'Analytics': 0 // No analytics templates in sample data
+                };
+                
+                document.querySelectorAll('.category-item').forEach(item => {
+                    const categoryName = item.querySelector('span').textContent.trim();
+                    const countElement = item.querySelector('.category-count');
+                    if (categories[categoryName] !== undefined) {
+                        countElement.textContent = categories[categoryName];
+                    }
+                });
+            }
+            
+            handleTemplateAction(action, templateTitle) {
+                switch(action) {
+                    case 'Edit':
+                        this.showNotification(`Opening editor for "${templateTitle}"`, 'info');
+                        break;
+                    case 'Duplicate':
+                        this.showNotification(`Duplicating "${templateTitle}"`, 'success');
+                        break;
+                    case 'Delete':
+                        if (confirm(`Are you sure you want to delete "${templateTitle}"?`)) {
+                            this.showNotification(`Deleted "${templateTitle}"`, 'warning');
+                        }
+                        break;
+                    case 'Create':
+                        this.showNotification('Creating new blank template', 'info');
+                        break;
+                }
+            }
+            
+            selectTemplate(template) {
+                this.showNotification(`Selected template: "${template.title}"`, 'success');
+                console.log('Selected template:', template);
+            }
+            
+            showEmptyState() {
+                const templateGrid = document.querySelector('.template-grid');
+                const blankTemplate = templateGrid.querySelector('.template-card:last-child');
+                
+                const emptyState = document.createElement('div');
+                emptyState.className = 'empty-state';
+                emptyState.innerHTML = `
+                    <div class="empty-icon">🔍</div>
+                    <div class="empty-title">No templates found</div>
+                    <div class="empty-description">
+                        ${this.searchQuery ? 
+                            `No templates match "${this.searchQuery}". Try a different search term.` : 
+                            `No templates in "${this.currentCategory}" category.`
+                        }
+                    </div>
+                    <button class="btn btn-primary" onclick="templateManager.clearFilters()">Clear Filters</button>
+                `;
+                
+                templateGrid.insertBefore(emptyState, blankTemplate);
+            }
+            
+            clearFilters() {
+                this.searchQuery = '';
+                this.currentCategory = 'All Templates';
+                document.querySelector('.search-input').value = '';
+                document.querySelector('.category-item').click();
+            }
+            
+            handleQuickAction(actionText) {
+                switch(actionText) {
+                    case '✨ Create from Blank':
+                        this.createNewTemplate();
+                        break;
+                    case '📋 Duplicate Template':
+                        this.showTemplateSelector('duplicate');
+                        break;
+                    case '📥 Import Template':
+                        this.importTemplate();
+                        break;
+                }
+            }
+            
+            handleHeaderAction(actionText) {
+                switch(actionText) {
+                    case '📤 Import':
+                        this.importTemplate();
+                        break;
+                    case '➕ New Template':
+                        this.createNewTemplate();
+                        break;
+                }
+            }
+            
+            handleSortChange(sortValue) {
+                let sortedTemplates = [...this.templates];
+                
+                switch(sortValue) {
+                    case 'Sort by: Name':
+                        sortedTemplates.sort((a, b) => a.title.localeCompare(b.title));
+                        break;
+                    case 'Sort by: Category':
+                        sortedTemplates.sort((a, b) => a.category.localeCompare(b.category));
+                        break;
+                    case 'Sort by: Modified':
+                        // For demo, we'll sort by the modified string
+                        sortedTemplates.sort((a, b) => {
+                            const order = { '2 days ago': 3, '3 days ago': 2, '1 week ago': 1 };
+                            return (order[b.modified] || 0) - (order[a.modified] || 0);
+                        });
+                        break;
+                    case 'Sort by: Recent':
+                    default:
+                        // Default sort order (recent first)
+                        break;
+                }
+                
+                this.templates = sortedTemplates;
+                this.renderTemplates();
+                this.showNotification(`Sorted templates by ${sortValue.replace('Sort by: ', '')}`, 'info');
+            }
+            
+            createNewTemplate() {
+                // Simulate creating a new template
+                const templateName = prompt('Enter template name:', 'New Template');
+                if (templateName && templateName.trim()) {
+                    const newTemplate = {
+                        id: this.templates.length + 1,
+                        title: templateName.trim(),
+                        description: 'Click edit to add a description and customize this template.',
+                        category: 'Project Reports',
+                        icon: '📄',
+                        modified: 'Just now'
+                    };
+                    
+                    this.templates.unshift(newTemplate); // Add to beginning
+                    this.renderTemplates();
+                    this.updateCategoryCounts();
+                    this.showNotification(`Created new template: "${templateName}"`, 'success');
+                    
+                    // Simulate opening the editor after a short delay
+                    setTimeout(() => {
+                        this.showNotification(`Opening editor for "${templateName}"...`, 'info');
+                    }, 1500);
+                } else if (templateName !== null) {
+                    this.showNotification('Template name cannot be empty', 'warning');
+                }
+            }
+            
+            importTemplate() {
+                // Simulate file import
+                this.showNotification('Opening file browser...', 'info');
+                
+                // Create a hidden file input for demonstration
+                const fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.accept = '.json,.xml,.pdf';
+                fileInput.style.display = 'none';
+                
+                fileInput.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        this.showNotification(`Importing template: "${file.name}"...`, 'info');
+                        
+                        // Simulate import process
+                        setTimeout(() => {
+                            const importedTemplate = {
+                                id: this.templates.length + 1,
+                                title: file.name.replace(/\.[^/.]+$/, ""), // Remove extension
+                                description: 'Imported template - click edit to customize.',
+                                category: 'Project Reports',
+                                icon: '📥',
+                                modified: 'Just now'
+                            };
+                            
+                            this.templates.unshift(importedTemplate);
+                            this.renderTemplates();
+                            this.updateCategoryCounts();
+                            this.showNotification(`Successfully imported "${file.name}"`, 'success');
+                        }, 2000);
+                    }
+                });
+                
+                document.body.appendChild(fileInput);
+                fileInput.click();
+                document.body.removeChild(fileInput);
+            }
+            
+            showTemplateSelector(action) {
+                if (this.templates.length === 0) {
+                    this.showNotification('No templates available to duplicate', 'warning');
+                    return;
+                }
+                
+                // Create a simple template selector dialog
+                const templateOptions = this.templates.map((t, index) => 
+                    `${index + 1}. ${t.title}`
+                ).join('\n');
+                
+                const selection = prompt(
+                    `Select a template to ${action}:\n\n${templateOptions}\n\nEnter the number (1-${this.templates.length}):`
+                );
+                
+                const templateIndex = parseInt(selection) - 1;
+                
+                if (selection && !isNaN(templateIndex) && templateIndex >= 0 && templateIndex < this.templates.length) {
+                    const selectedTemplate = this.templates[templateIndex];
+                    this.duplicateTemplate(selectedTemplate);
+                } else if (selection !== null) {
+                    this.showNotification('Invalid selection', 'warning');
+                }
+            }
+            
+            duplicateTemplate(originalTemplate) {
+                const newName = prompt('Enter name for the duplicated template:', `${originalTemplate.title} (Copy)`);
+                
+                if (newName && newName.trim()) {
+                    const duplicatedTemplate = {
+                        ...originalTemplate,
+                        id: this.templates.length + 1,
+                        title: newName.trim(),
+                        modified: 'Just now'
+                    };
+                    
+                    this.templates.unshift(duplicatedTemplate);
+                    this.renderTemplates();
+                    this.updateCategoryCounts();
+                    this.showNotification(`Duplicated template: "${newName}"`, 'success');
+                } else if (newName !== null) {
+                    this.showNotification('Template name cannot be empty', 'warning');
+                }
+            }
+            
+            showNotification(message, type = 'info') {
+                // Remove existing notifications
+                const existingNotification = document.querySelector('.notification');
+                if (existingNotification) {
+                    existingNotification.remove();
+                }
+                
+                const notification = document.createElement('div');
+                notification.className = `notification notification-${type}`;
+                
+                const colors = {
+                    success: { bg: '#d4edda', border: '#c3e6cb', text: '#155724' },
+                    warning: { bg: '#fff3cd', border: '#ffeaa7', text: '#856404' },
+                    info: { bg: '#d1ecf1', border: '#bee5eb', text: '#0c5460' }
+                };
+                
+                const color = colors[type] || colors.info;
+                
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 80px;
+                    right: 20px;
+                    padding: 12px 16px;
+                    background: ${color.bg};
+                    border: 1px solid ${color.border};
+                    color: ${color.text};
+                    border-radius: 6px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                    z-index: 1000;
+                    font-size: 14px;
+                    font-weight: 500;
+                    max-width: 300px;
+                    animation: slideInRight 0.3s ease;
+                `;
+                
+                const icons = {
+                    success: '✅',
+                    warning: '⚠️',
+                    info: 'ℹ️'
+                };
+                
+                notification.innerHTML = `${icons[type] || icons.info} ${message}`;
+                document.body.appendChild(notification);
+                
+                // Auto-remove after 3 seconds
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.style.animation = 'slideOutRight 0.3s ease forwards';
+                        setTimeout(() => notification.remove(), 300);
+                    }
+                }, 3000);
+            }
+        }
+        
+        // Add notification animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            
+            @keyframes slideOutRight {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Initialize the template manager
+        let templateManager;
+        document.addEventListener('DOMContentLoaded', () => {
+            templateManager = new TemplateManager();
+        });
+    </script>
+</body>
+</html>

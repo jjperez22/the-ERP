@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module Dependencies Display</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        /* Dependency Container */
+        .dependency-container {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* Header */
+        .dependency-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .dependency-header h3 {
+            margin: 0;
+            color: #333;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        
+        .dependency-icon {
+            font-size: 1.5rem;
+        }
+        
+        /* Dependencies List */
+        .dependencies-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .dependency-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .dependency-item:last-child {
+            border-bottom: none;
+        }
+        
+        /* Dependency Status Icon */
+        .status-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .status-satisfied {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-missing {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .status-conflict {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        /* Dependency Info */
+        .dependency-info {
+            flex: 1;
+        }
+        
+        .dependency-name {
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 2px;
+        }
+        
+        .dependency-version {
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .dependency-description {
+            font-size: 12px;
+            color: #888;
+            margin-top: 4px;
+        }
+        
+        /* Status Badges */
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .badge-satisfied {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .badge-missing {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .badge-conflict {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        /* Summary Section */
+        .dependency-summary {
+            margin-top: 20px;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+        
+        .summary-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .summary-stats {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .stat-number {
+            font-weight: 600;
+        }
+        
+        .stat-satisfied {
+            color: #28a745;
+        }
+        
+        .stat-missing {
+            color: #dc3545;
+        }
+        
+        .stat-conflict {
+            color: #ffc107;
+        }
+        
+        /* Empty State */
+        .empty-dependencies {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+        
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        
+        .empty-text {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        
+        .empty-subtext {
+            font-size: 14px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="dependency-container">
+        <!-- Header -->
+        <div class="dependency-header">
+            <span class="dependency-icon">🔗</span>
+            <h3>Module Dependencies</h3>
+        </div>
+        
+        <!-- Dependencies List -->
+        <ul class="dependencies-list">
+            <li class="dependency-item">
+                <div class="status-icon status-satisfied">✓</div>
+                <div class="dependency-info">
+                    <div class="dependency-name">Chart Library</div>
+                    <div class="dependency-version">Required: ^2.1.0 | Installed: 2.3.1</div>
+                    <div class="dependency-description">Advanced charting components for data visualization</div>
+                </div>
+                <span class="status-badge badge-satisfied">Satisfied</span>
+            </li>
+            
+            <li class="dependency-item">
+                <div class="status-icon status-missing">✗</div>
+                <div class="dependency-info">
+                    <div class="dependency-name">Data Processor</div>
+                    <div class="dependency-version">Required: >=1.5.0 | Not Installed</div>
+                    <div class="dependency-description">Core data processing utilities</div>
+                </div>
+                <span class="status-badge badge-missing">Missing</span>
+            </li>
+            
+            <li class="dependency-item">
+                <div class="status-icon status-conflict">⚠</div>
+                <div class="dependency-info">
+                    <div class="dependency-name">UI Framework</div>
+                    <div class="dependency-version">Required: ~3.2.0 | Installed: 3.1.8</div>
+                    <div class="dependency-description">User interface framework and components</div>
+                </div>
+                <span class="status-badge badge-conflict">Conflict</span>
+            </li>
+            
+            <li class="dependency-item">
+                <div class="status-icon status-satisfied">✓</div>
+                <div class="dependency-info">
+                    <div class="dependency-name">Authentication Module</div>
+                    <div class="dependency-version">Required: ^1.0.0 | Installed: 1.2.5</div>
+                    <div class="dependency-description">User authentication and authorization</div>
+                </div>
+                <span class="status-badge badge-satisfied">Satisfied</span>
+            </li>
+            
+            <li class="dependency-item">
+                <div class="status-icon status-missing">✗</div>
+                <div class="dependency-info">
+                    <div class="dependency-name">Email Service</div>
+                    <div class="dependency-version">Required: >=2.0.0 | Not Installed</div>
+                    <div class="dependency-description">Email notification and communication service</div>
+                </div>
+                <span class="status-badge badge-missing">Missing</span>
+            </li>
+        </ul>
+        
+        <!-- Summary -->
+        <div class="dependency-summary">
+            <div class="summary-title">
+                <span>📊</span>
+                Dependency Summary
+            </div>
+            <div class="summary-stats">
+                <div class="stat-item">
+                    <span class="stat-number stat-satisfied">2</span>
+                    <span>Satisfied</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number stat-missing">2</span>
+                    <span>Missing</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number stat-conflict">1</span>
+                    <span>Conflicts</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Empty State Example (hidden by default) -->
+    <div class="dependency-container" style="display: none;">
+        <div class="dependency-header">
+            <span class="dependency-icon">🔗</span>
+            <h3>Module Dependencies</h3>
+        </div>
+        
+        <div class="empty-dependencies">
+            <div class="empty-icon">📦</div>
+            <div class="empty-text">No Dependencies Required</div>
+            <div class="empty-subtext">This module can be installed without any additional dependencies</div>
+        </div>
+    </div>
+</body>
+</html>

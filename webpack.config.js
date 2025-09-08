@@ -213,7 +213,7 @@ module.exports = (env, argv) => {
       new HtmlWebpackPlugin({
         template: './index.html',
         filename: 'index.html',
-        inject: false, // We're manually managing script tags
+        inject: 'body', // Let webpack inject the built bundles
         minify: isProduction ? {
           removeComments: true,
           collapseWhitespace: true,
